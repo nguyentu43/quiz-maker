@@ -1,0 +1,233 @@
+<div class="container">
+<?php if(isset($error)): ?>
+
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title">Thông báo</h3>
+	</div>
+	<div class="panel-body">
+		<?= $error ?>
+	</div>
+</div>
+
+<?php else: ?>
+
+<?php
+
+	$this->headMeta()
+	->setProperty('og:title', '10Quiz Quản lí đề thi')
+	->setProperty('og:url', $this->url('test', [], [ 'force_canonical' => true ]));
+
+	echo $this->headTitle('Quản lí đề thi');
+
+?>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h5 class="panel-title">Tìm kiếm đề thi</h5>
+	</div>
+	<div class="panel-body">
+		<form method="get" class="form-inline" role="form">
+
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-file-text-o" aria-hidden="true"></i> Tên đề thi</div>
+				<input type="text" class="form-control" id="test_name" name="test_name" placeholder="Nhập từ khoá" value="<?= $query['test_name']?>">
+			</div>
+
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i> Từ</div>
+				<input type="text" class="form-control" id="from_date" name="from_date" placeholder="Ngày bắt đầu" value="<?= $query['from_date']?>">
+				<span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+			</div>
+
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i> Đến</div>
+				<input type="text" class="form-control" id="to_date" name="to_date" placeholder="Ngày kết thúc" value="<?= $query['to_date']?>">
+				<span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+			</div>
+
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-globe" aria-hidden="true"></i> Dạng đề</div>
+				<select name="is_private" class="form-control">
+					<option value="" <?= $query['is_private'] == '' ? 'selected' : ''?>>Tất cả</option>
+					<option value="0" <?= $query['is_private'] == '0' ? 'selected' : ''?>>Công khai</option>
+					<option value="1" <?= $query['is_private'] == '1' ? 'selected' : ''?>>Ẩn</option>
+				</select>
+			</div>
+
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-play" aria-hidden="true"></i> Lọc đề mở/đóng</div>
+				<select name="is_enable" class="form-control">
+					<option value="" <?= $query['is_enable'] == '' ? 'selected' : ''?>>Tất cả</option>
+					<option value="1" <?= $query['is_enable'] == '1' ? 'selected' : ''?>>Đã mở</option>
+					<option value="0" <?= $query['is_enable'] == '0' ? 'selected' : ''?>>Đã đóng</option>
+				</select>
+			</div>
+
+			<div class="input-group">
+				<button type="submit" class="btn btn-default btnSearch"><i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm</button>
+			</div>
+			
+		</form>
+	</div>
+
+	<script>
+		$().ready(function(){
+
+			$('#from_date').parent().datetimepicker({
+				format: "DD/MM/YYYY"
+			});
+
+			$('#to_date').parent().datetimepicker({
+				format: "DD/MM/YYYY"
+			});
+
+			$("#from_date").parent().on("dp.change", function (e) {
+	            $('#to_date').parent().data("DateTimePicker").minDate(e.date);
+	        });
+	        $("#to_date").parent().on("dp.change", function (e) {
+	            $('#from_date').parent().data("DateTimePicker").maxDate(e.date);
+	        });
+
+			$('.btnSearch').click(function(e){
+
+				if($('#from_date').val() && !$('#to_date').val())
+				{
+					$.notify('Bạn chưa chọn ngày kết thúc', {type: 'warning'});
+					e.preventDefault();
+				}
+
+				if($('#to_date').val() && !$('#from_date').val())
+				{
+					$.notify('Bạn chưa chọn ngày bắt đầu', {type: 'warning'});
+					e.preventDefault();
+				}
+			});
+
+		});
+	</script>
+
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading panel-button">
+		<a class="btn btn-default btn-sm pull-right" href="<?= $this->url('test/create')?>"><i class="fa fa-plus"></i> Thêm đề thi mới</a>
+		<h5 class="panel-title">Đề thi</h5>
+	</div>
+	<div class="panel-body">
+		<?php
+			if($tests->count() == 0):
+				echo "Không có đề thi nào";
+			else:
+				foreach($tests as $test):
+					$id = $test->test_id;
+					$date = date_format(date_create($test->created_date), 'd/m/Y H:i:s');
+		?>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-sm-2 text-center">
+						<?php
+							if(!empty($test->img))
+								echo "<img style='width: 100px; height: auto' src='".$this->basePath('img/tests/'.$test->img)."' alt='img-".$test->test_name."'/>";
+							else
+								echo "<img style='width: 100px; height: auto' src='".$this->basePath('img/10quiz.png')."' alt='img-".$test->test_name."'/>";
+						?>
+						</div>
+						<div class="col-sm-10">
+							<div class="test-title">
+								<?= $test->test_name ?>
+							</div>
+							<div class="short-info">
+								<?php if($test->is_private == 1): ?>
+							 		<div><strong>Mã đề thi: <span class="text-success"><?= $test->test_code?></span></strong></div>
+							 	<?php endif; ?>
+							 	<?php
+							 		if($test->is_private == 1)
+							 			echo ' <i class="fa fa-user-secret text-primary" aria-hidden="true"></i> Ẩn';
+							 		else
+							 			echo ' <i class="fa fa-globe text-primary" aria-hidden="true"></i> Công khai';
+
+							 		if($test->is_enable == '1')
+							 			echo ' <i class="fa fa-play-circle-o text-success" aria-hidden="true"></i> Đã mở';
+							 		else
+							 			echo ' <i class="fa fa-stop-circle-o text-danger" aria-hidden="true"></i> Đã đóng';
+							 	?>
+							</div>
+							<?php if(isset($test->fullname))
+									echo '<div style="margin: 5px 0">Người ra đề: '. $test->fullname.'</div>';
+							?>
+
+							<div style="margin: 5px 0">
+								<a href="<?= $this->url('test/edit', ['id' => $id])?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Chỉnh sửa</a>
+								<a href="<?= $this->url('test/create', [], [ 'query' => ['test_id' => $id] ])?>"><i class="fa fa-copy" aria-hidden="true"></i> Sao chép</a>
+								<a href="<?= $this->url('test/start', ['id' => $id])?>?preview=true"><i class="fa fa-eye" aria-hidden="true"></i> Xem trước</a>
+								<a href="<?= $this->url('test/start', ['id' => $id])?>"><i class="fa fa-pencil" aria-hidden="true"></i> Làm bài</a>
+								<a href="<?= $this->url('result/list', ['test_id' => $id])?>"><i class="fa fa-table" aria-hidden="true"></i> Kết quả</a>
+							</div>
+
+							<h4><span class="label label-primary">Tổng số lượt đã làm: <?= $test->result_count?></span></h4>
+						</div>
+
+						<div class="col-sm-12">
+							<hr/>
+							<button class="btn btn-sm btn-default" data-toggle="collapse" data-target="#detail<?=$id?>">Chi tiết</button>
+							<div id="detail<?=$id?>" class="collapse" style="margin-top: 7px">
+								<table class="table table-bordered" style="width: 100%">
+									<tbody>
+										<tr>
+											<td class="col-sm-3"><i class="fa fa-question-circle-o" aria-hidden="true"></i> Số câu hỏi </td><td><?= $test->question_count?></td>
+										</tr>
+										<tr>
+											<td><i class="fa fa-calendar" aria-hidden="true"></i> Ngày tạo </td><td><?= $date?></td>
+										</tr>
+										<tr>
+											<td><i class="fa fa-clock-o" aria-hidden="true"></i> Thời gian làm bài </td><td><?= $test->time_limit > 0 ? $test->time_limit. ' phút': 'Không giới hạn' ?></td>
+										</tr>
+										<tr>
+											<td><i class="fa fa-pencil" aria-hidden="true"></i> Số lần làm bài </td><td><?= $test->attemps > 0 ? $test->attemps : 'Không giới hạn' ?></td>
+										</tr>
+										<tr>
+											<td><i class="fa fa-bars" aria-hidden="true"></i> Mô tả</td>
+											<td><?= empty($test->description) && trim(strip_tags($test->description)) == "" ? "Trống" : $test->description ?></td>
+										</tr>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<?php endforeach;?>
+		<script type="text/javascript">
+			$().ready(function(){
+				$('[data-toggle=tooltip]').tooltip();
+			});
+		</script>
+		<?= $this->paginationControl($this->tests, 'sliding', 'partial/paginator', ['route' => 'test', 'query' => $query]) ?>
+		<?php endif;?>
+	</div>
+</div>
+
+<?php endif;?>
+
+</div>
+
+<style>
+
+	.test-title{
+		font-size: 18px;
+		margin: 5px 0;
+		font-weight: bold;
+	}
+
+	.short-info div{
+		margin: 5px 0;
+	}
+
+</style>

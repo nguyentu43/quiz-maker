@@ -1,0 +1,61 @@
+<?php if ($this->pageCount): ?>
+<div class="text-center">
+  <ul class="pagination">
+
+  <?php if (isset($this->previous)): ?>
+    <li>
+      <?php
+
+        $query['page'] = $this->previous;
+
+      ?>
+      <a href="<?= $this->url($route, [], ['query' => $query]) ?>">
+        &lt;&lt;
+      </a>
+    </li>
+  <?php else: ?>
+    <li class="disabled">
+      <a href="#">
+        &lt;&lt;
+      </a>
+    </li>
+  <?php endif ?>
+
+  <?php foreach ($this->pagesInRange as $page): ?>
+    <?php if ($page !== $this->current): 
+
+          $query['page'] = $page;
+    ?>
+      <li>
+        <a href="<?= $this->url($route, [], ['query' => $query]) ?>">
+          <?= $page ?>
+        </a>
+      </li>
+    <?php else: ?>
+      <li class="active">
+        <a href="#"><?= $page ?></a>
+      </li>
+    <?php endif ?>
+  <?php endforeach ?>
+
+  <?php if (isset($this->next)): ?>
+    <li>
+      <?php
+
+        $query['page'] = $this->next;
+
+      ?>
+      <a href="<?= $this->url($route, [], ['query' => $query]) ?>">
+        &gt;&gt;
+      </a>
+    </li>
+  <?php else: ?>
+    <li class="disabled">
+      <a href="#">
+        &gt;&gt;
+      </a>
+    </li>
+  <?php endif ?>
+  </ul>
+</div>
+<?php endif ?>

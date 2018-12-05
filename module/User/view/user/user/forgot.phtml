@@ -1,0 +1,85 @@
+<?= $this->headTitle('Khôi phục mật khẩu') ?>
+<div class="container">
+	<div class="col-sm-6 col-sm-offset-3" style="top: 160px; position: relative">
+		<?php if(isset($msg)): ?>
+
+		<div class="panel panel-success">
+			<div class="panel-heading">
+				<h3 class="panel-title">Thông báo</h3>
+			</div>
+			<div class="panel-body">
+				<?= $msg?>
+			</div>
+			<div class="panel-footer">
+				<a href="<?= $this->url('home') ?>" class="btn btn-default">Trang chủ</a>
+			</div>
+		</div>
+
+		<?php elseif(isset($error)): ?>
+
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<h3 class="panel-title">Thông báo</h3>
+			</div>
+			<div class="panel-body">
+				<?=$error?>
+			</div>
+		</div>
+
+		<?php elseif(!isset($forgot)): ?>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Khôi phục lại mật khẩu</h3>
+			</div>
+			<div class="panel-body">
+				<form method="post" role="form">
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon"><i class="fa fa-envelope-o" aria-hidden="true"></i></div>
+							<input type="email" class="form-control" name="email" placeholder="Nhập địa chỉ email" required/>
+						</div>
+					</div>
+
+					<button type="submit" name="sendMail" class="btn btn-success">Lấy mật khẩu</button>
+				</form>
+			</div>
+		</div>
+
+		<?php else: ?>
+
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Khôi phục lại mật khẩu</h3>
+			</div>
+			<div class="panel-body">
+				<form method="post" class="form-horizontal" role="form">
+
+					<?php if(isset($forgot_error)):?>
+
+					<div class="alert alert-danger">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						<strong>Thông báo!</strong> <?= $forgot_error?>
+					</div>
+
+					<?php endif;?>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Mật khẩu mới: </label>
+						<div class="col-sm-9">
+							<input type="password" class="form-control" name="password" placeholder="Nhập mật khẩu mới" required min="8"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-9 col-sm-offset-3">
+							<button type="submit" name="resetPassword" class="btn btn-success">Đặt mật khẩu mới</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<?php endif;?>
+
+	</div>
+</div>

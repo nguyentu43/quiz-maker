@@ -1,0 +1,214 @@
+<div class="container">
+	<div class="categories">
+		<h4 class='title text-danger'>
+			CÁC ĐỀ THI ĐƯỢC LÀM NHIỀU NHẤT		
+		</h4>
+		<div class="list">
+			<?php
+				if(count($tests_top) == 0)
+					echo "<h4>Không có đề thi</h4>";
+				foreach($tests_top as $test):
+					if(!empty($test['img']))
+						$img = $this->basePath('img/tests/'.$test['img']);
+					else
+						$img = $this->basePath('img/10quiz.png');
+			?>
+				<div class="panel panel-default panel-test">
+					<div class="img-test">
+						<img src="<?= $img ?>" alt="img-<?= $test['test_name']?>"/>
+					</div>
+					<div class="panel-body">
+						<h4><?= $test['test_name']?></h4>
+						<div>
+							<span class="label label-primary">
+								<i class="fa fa-user" aria-hidden="true"></i> <a href="<?= $this->url('test/public', [], ['query' => [ 'author_id' => $test['user_id'] ]])?>"><?= $test['fullname'] ?></a>
+							</span>
+							<span class="label label-success">
+								<i class="fa fa-question-circle-o" aria-hidden="true"></i> <?= $test['question_count'] ?> câu
+							</span>
+							<span class="label label-danger">
+								<i class="fa fa-clock-o" aria-hidden="true"></i> <?= $test['time_limit'] ?> phút
+							</span>
+							<span class="label label-info">
+								<i class="fa fa-line-chart" aria-hidden="true"></i> <?= $test['result_count']?> lượt làm
+							</span>
+							<?php if($test['is_login']): ?>
+								<span class="label label-default">
+									<i class="fa fa-key" aria-hidden="true"></i> 
+								</span>
+							<?php endif;?>
+						</div>
+					</div>
+					<div class="panel-footer" style="background: white">
+						<a class="btn btn-sm btn-primary" href="<?= $this->url('test/start', ['id' => $test['test_id']])?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Làm bài</a>
+						<?php 
+
+							if(!empty($user)):
+								if($user->user_id == $test['user_id'] || $user->role_id == 3)
+									echo '<a class="btn btn-sm btn-success" href="'.$this->url('test/edit', ['id' => $test['test_id']]).'"><i class="fa fa-pencil" aria-hidden="true"></i> Sửa</a>';
+						?>
+							<a class="btn btn-sm btn-default" href="<?= $this->url('test/public', [], ['query' => [ 'detail' => $test['test_id'] ]])?>"><i class="fa fa-eye" aria-hidden="true"></i> Xem</a>
+						<?php endif; ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
+	<div class="categories">
+		<h4 class='title text-warning'>
+			CÁC ĐỀ THI ĐƯỢC THÊM GẦN ĐÂY		
+		</h4>
+		<div class="list">
+			<?php
+				if(count($tests_recently) == 0)
+					echo "<h4>Không có đề thi</h4>";
+				foreach($tests_recently as $test):
+					if(!empty($test['img']))
+						$img = $this->basePath('img/tests/'.$test['img']);
+					else
+						$img = $this->basePath('img/10quiz.png');
+			?>
+				<div class="panel panel-default panel-test">
+					<div class="img-test">
+						<img src="<?= $img ?>" alt="img-<?= $test['test_name']?>"/>
+					</div>
+					<div class="panel-body">
+						<h4><?= $test['test_name']?></h4>
+						<div>
+							<span class="label label-primary">
+								<i class="fa fa-user" aria-hidden="true"></i> <a href="<?= $this->url('test/public', [], ['query' => [ 'author_id' => $test['user_id'] ]])?>"><?= $test['fullname'] ?></a>
+							</span>
+							<span class="label label-success">
+								<i class="fa fa-question-circle-o" aria-hidden="true"></i> <?= $test['question_count'] ?> câu
+							</span>
+							<span class="label label-danger">
+								<i class="fa fa-clock-o" aria-hidden="true"></i> <?= $test['time_limit'] ?> phút
+							</span>
+							<span class="label label-info">
+								<i class="fa fa-line-chart" aria-hidden="true"></i> <?= $test['result_count']?> lượt làm
+							</span>
+							<?php if($test['is_login']): ?>
+								<span class="label label-default">
+									<i class="fa fa-key" aria-hidden="true"></i> 
+								</span>
+							<?php endif;?>
+						</div>
+					</div>
+					<div class="panel-footer" style="background: white">
+						<a class="btn btn-sm btn-primary" href="<?= $this->url('test/start', ['id' => $test['test_id']])?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Làm bài</a>
+						<?php 
+
+							if(!empty($user)):
+								if($user->user_id == $test['user_id'] || $user->role_id == 3)
+									echo '<a class="btn btn-sm btn-success" href="'.$this->url('test/edit', ['id' => $test['test_id']]).'"><i class="fa fa-pencil" aria-hidden="true"></i> Sửa</a>';
+						?>
+							<a class="btn btn-sm btn-default" href="<?= $this->url('test/public', [], ['query' => [ 'detail' => $test['test_id'] ]])?>"><i class="fa fa-eye" aria-hidden="true"></i> Xem</a>
+						<?php endif; ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
+	<?php
+		foreach ($categories_test as $item):
+	?>
+		<div class="categories">
+			<h4 class='title text-success'>
+				<?= mb_strtoupper($item->name, 'utf8')?>
+				<span class="pull-right"><a href="<?= $this->url('test/public', [], ['query' => [ 'category_test_id' => $item['id'] ]])?>">Xem thêm</a></span>
+			</h4>
+			<div class="list">
+			<?php
+				if(count($item->tests) == 0)
+					echo "<h4>Không có đề thi</h4>";
+				foreach($item->tests as $test):
+					if(!empty($test['img']))
+						$img = $this->basePath('img/tests/'.$test['img']);
+					else
+						$img = $this->basePath('img/10quiz.png');
+			?>
+				<div class="panel panel-default panel-test">
+					<div class="img-test">
+						<img src="<?= $img ?>" alt="img-<?= $test['test_name']?>" />
+					</div>
+					<div class="panel-body">
+						<h4><?= $test['test_name']?></h4>
+						<div>
+							<span class="label label-primary">
+								<i class="fa fa-user" aria-hidden="true"></i> <a href="<?= $this->url('test/public', [], ['query' => [ 'author_id' => $test['user_id'] ]])?>"><?= $test['fullname'] ?></a>
+							</span>
+							<span class="label label-success">
+								<i class="fa fa-question-circle-o" aria-hidden="true"></i> <?= $test['question_count'] ?> câu
+							</span>
+							<span class="label label-danger">
+								<i class="fa fa-clock-o" aria-hidden="true"></i> <?= $test['time_limit'] ?> phút
+							</span>
+							<span class="label label-info">
+								<i class="fa fa-line-chart" aria-hidden="true"></i> <?= $test['result_count']?> lượt làm
+							</span>
+							<?php if($test['is_login']): ?>
+								<span class="label label-default">
+									<i class="fa fa-key" aria-hidden="true"></i> 
+								</span>
+							<?php endif;?>
+						</div>
+					</div>
+					<div class="panel-footer" style="background: white">
+						<a class="btn btn-sm btn-primary" href="<?= $this->url('test/start', ['id' => $test['test_id']])?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Làm bài</a>
+						<?php 
+
+							if(!empty($user)):
+								if($user->user_id == $test['user_id'] || $user->role_id == 3)
+									echo '<a class="btn btn-sm btn-success" href="'.$this->url('test/edit', ['id' => $test['test_id']]).'"><i class="fa fa-pencil" aria-hidden="true"></i> Sửa</a>';
+						?>
+							<a class="btn btn-sm btn-default" href="<?= $this->url('test/public', [], ['query' => [ 'detail' => $test['test_id'] ]])?>"><i class="fa fa-eye" aria-hidden="true"></i> Xem</a>
+						<?php endif; ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+			</div>
+		</div>
+	<?php endforeach; ?>
+	<script type="text/javascript">
+		$().ready(function(){
+
+			$('.categories .list').slick({
+				infinite: true,
+				slidesToShow: 4,
+				slidesToScroll: 4,
+				autoplay: true,
+				arrows: true,
+				responsive: [
+					{
+						breakpoint: 1024,
+						settings: {
+							slidesToShow: 4,
+							slidesToScroll: 4,
+							arrows: false
+						}
+					},
+					{
+						breakpoint: 768,
+						settings: {
+							slidesToShow: 3,
+							slidesToScroll: 3,
+							arrows: false
+						}
+					},
+					{
+						breakpoint: 480,
+						settings: {
+							slidesToShow: 1,
+							slidesToScroll: 1,
+							arrows: false
+						}
+					},
+
+				]
+			});
+
+		});
+	</script>
+</div>

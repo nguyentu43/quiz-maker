@@ -1,0 +1,414 @@
+<div class="container">
+<?= $this->inlineScript()->setFile($this->basePath('js/mustache.min.js'))?>
+
+<?php if(isset($error)): ?>
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<h3 class="panel-title">Thông báo</h3>
+		</div>
+		<div class="panel-body">
+			<?=$error ?>
+		</div>
+	</div>
+<?php else:
+
+	$this->headMeta()
+	->setProperty('og:title', '10Quiz Đề thi - '. $test['test_name'])
+	->setProperty('og:url', $this->url('test/start', [ 'id' => $test['test_id'], [ 'force_canonical' => true ] ]));
+
+	if(!empty($test['img']))
+	{
+		$img = $this->basePath('img/tests/'.$test['img']);
+		$this->headMeta()
+		->setProperty('og:image', $img);
+	}
+
+	if(!empty($test['description']) && trim(strip_tags($test['description'])) != '')
+	{
+		$this->headMeta()
+		->setProperty('og:description', trim(strip_tags($test['description'])));
+	}
+
+	echo $this->headMeta();
+	echo $this->headTitle('Đề thi - '. $test['test_name']);
+
+?>
+<div class="col-md-12">
+	<div id="divTest">
+		<h1 class="text-center" style="margin-top: 20px; margin-bottom: 40px;"><?= mb_strtoupper($test['test_name'], 'utf8') ?></h1>
+		<input type="hidden" name="test_id" value="<?= $test['test_id'] ?>">
+		<div class="col-md-8 col-md-offset-2">
+			<div role="tabpanel">
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs" role="tablist">
+					<li role="presentation" class="active">
+						<a href="#home" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-info-circle" aria-hidden="true"></i> Thông tin đề thi</a>
+					</li>
+					<li role="presentation">
+						<a href="#tab" aria-controls="tab" role="tab" data-toggle="tab"><i class="fa fa-list-ol" aria-hidden="true"></i> Xếp hạng</a>
+					</li>
+				</ul>
+			
+				<!-- Tab panes -->
+				<div class="tab-content" style="padding: 10px 10px; background-color:white; border: 1px solid #ddd">
+					<div role="tabpanel" class="tab-pane active" id="home">
+
+						<?php 
+
+							if(empty($test['img']))
+								$img = $this->basePath('img/10quiz.png');
+							else
+								$img = $this->basePath('img/tests/'.$test['img']);
+
+						?>
+
+						<div class="img-test">
+							<img src="<?= $img ?>" />
+						</div>
+
+						<ul class="list-group">
+							<li class="list-group-item"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Người ra đề: <?= $fullname?> <a href="<?= $this->url('test/public')?>?user=<?= $test['user_id']?>"> (Xem thêm các đề khác)</a></li>
+							<li class="list-group-item"><i class="fa fa-bars" aria-hidden="true"></i> Danh mục đề: <?= $test['category_test_name'] ?></li>
+							<li class="list-group-item"><i class="fa fa-bars" aria-hidden="true"></i> Mô tả: <?= empty($test['description']) ? "Không có" : $test['description'] ?></li>
+							<li class="list-group-item"><i class="fa fa-question-circle-o" aria-hidden="true"></i> Số câu hỏi: <?= $test['question_count']?></li>
+							<li class="list-group-item"><i class="fa fa-clock-o" aria-hidden="true"></i> Thời gian làm bài: <?= $test->time_limit > 0 ? $test->time_limit. ' phút': 'Không giới hạn' ?></li>
+							<li class="list-group-item"><i class="fa fa-pencil" aria-hidden="true"></i> Số lần làm tối đa: <?= $test->attemps > 0 ? $test->attemps : 'Không giới hạn' ?> <?= $attemps > 0 ? '(Đã làm '.$attemps. ' lần)': ''?></li>
+						</ul>
+
+
+						<div class="panel panel-default" id="#divInput">
+							<div class="panel-heading">Nhập thông tin</div>
+							<div class="panel-body">
+								<form id="formUser" class="form-horizontal">
+									<label class="label-control col-sm-3">Địa chỉ IP:</label>
+									<div class="col-sm-9">
+										<div class="form-group">
+											<input id="fullname" value="<?= $ip ?>" class="form-control" disabled required />
+										</div>
+									</div>
+								<?php if(empty($user)): ?>
+									<label class="label-control col-sm-3">Họ và tên:</label>
+									<div class="col-sm-9">
+										<div class="form-group">
+											<input id="fullname" class="form-control" required />
+										</div>
+									</div>
+								<?php endif; ?>
+									<label class="label-control col-sm-3">Thông tin thêm:</label>
+									<div class="col-sm-9">
+										<div class="form-group">
+											<textarea id="information" class="form-control" placeholder="Thông tin về lớp, mã số"></textarea>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+
+						<div class="text-right">
+							<button type="button" class="btn btn-success" id="btnStart">Bắt đầu làm <i class="fa fa-play" aria-hidden="true"></i></button>
+						</div>
+					</div>
+					<div role="tabpanel" class="tab-pane" id="tab">
+						<?php
+							if($ranks->count() == 0):
+								echo "<p>Không có kết quả thi nào</p>";
+							else:
+						?>
+							<table class="table table-bordered table-ranks">
+								<thead>
+									<tr><th class="col-sm-2">Hạng</th><th class="col-sm-7">Họ và tên</th><th>Số câu đúng</th></tr>
+								</thead>
+								<tbody>
+									<?php
+										$i = 1;
+										foreach ($ranks as $user):
+											$tr = <<< EOD
+												<tr>
+													<td>$i</td>
+													<td>{$user['fullname']}</td>
+													<td>{$user['count']}/{$test['question_count']}</td>
+												</tr>
+EOD;
+											echo $tr;
+											$i++;
+										endforeach;
+									?>
+									
+								</tbody>
+							</table>
+
+							<h4><span class="label label-primary">Tổng số lượt đã làm: <?= $test['result_count'] ?></span></h4>
+						<?php endif;?>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel panel-default" style="display:none" id="divAnswer">
+		<div class="panel-body">
+
+			<div class="info-test text-center">
+				<div id="time" style="display:none">
+					<div>Thời gian còn lại</div>
+					<h4><label class="label label-danger" id="time_span"></label></h4>
+					<div class="progress" style="margin-top: 10px; background-color: #f5f5f5">
+						<div class="progress-bar progress-bar-danger progress-bar-striped active" style="width: 0%"></div>
+					</div>
+				</div>
+				<div class="pagination-scroll">
+					<ul class="pagination">
+					</ul>
+				</div>
+			</div>
+			<div id="divQuestion"></div>
+		</div>
+	</div>
+
+	<div class="panel panel-default panel-border-top" id="divSubmit" style="display: none">
+		<div class="panel-body text-center">
+			<button type="button" class="btn btn-success btn-lg" id="btnSubmit">NỘP BÀI</button>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalCheck">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Làm bài</h4>
+				</div>
+				<div class="modal-body">
+					<span id="message_not_done" style="display: none">Bạn chưa trả lời hết tất cả các câu hỏi. </span>Bạn có muốn nộp bài không?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+					<button type="button" class="btn btn-primary btnConfirm">Đồng ý</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalResume">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Khôi phục bài làm</h4>
+				</div>
+				<div class="modal-body">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btnClose" data-dismiss="modal">Đóng</button>
+					<button type="button" class="btn btn-primary btnConfirm">Tiếp tục</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script id="template" type="x-tmpl-mustache">
+		<div class="panel panel-default" id="q{{index}}">
+			<div class=panel-heading style="padding: 5px 15px">
+				<h4>Câu {{ index }} / {{ total_q }}</h4>
+			</div>
+			<div class=panel-body>
+
+				<div class="panel panel-question-text">
+					<div class="panel-body">
+						{{ &question_text }}
+					</div>
+				</div>
+
+				<div><label class="label label-primary">Phần trả lời</label></div>
+				<div><label class="label label-success">{{tooltip}}</label></div>
+				<table class="table table-option" id="table-option-{{question_id}}" style="margin-bottom: 0">
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div
+	</script>
+
+	<script id="tmplOption1" type="x-tmpl-mustache">
+		{{#question_options}}
+		<tr>
+			<td class="index"><input type="radio" name="radio-{{question_id}}" data-id="{{id}}" /> {{index}}. </td>
+			<td>{{ &option_text }}</td>
+		</tr>
+		{{/question_options}}
+	</script>
+
+	<script id="tmplOption2" type="x-tmpl-mustache">
+		{{#question_options}}
+		<tr>
+			<td class="index"><input type="checkbox" data-id="{{id}}"/> {{index}}. </td>
+			<td>{{ &option_text }}</td>
+		</tr>
+		{{/question_options}}
+	</script>
+
+	<script id="tmplOption3" type="x-tmpl-mustache">
+		{{#question_options}}
+		<tr data-id="{{id}}">
+			<td class="index"><i class="fa fa-sort fa-2x" aria-hidden="true"></td>
+			<td>{{ &option_text }}</td>
+		</tr>
+		{{/question_options}}
+	</script>
+
+	<script id="tmplOption4" type="x-tmpl-mustache">
+		<tr class="load-linker">
+			<td class="text-center"><i class="fa fa-cog fa-spin fa-4x fa-fw"></i></td>
+		</tr>
+		<tr>
+			<td><div class='linker'></div></td>
+		</tr>
+	</script>
+
+	<script id="tmplOption5" type="x-tmpl-mustache">
+		<tr>
+			<td>
+				{{#question_options.group_text}}
+					<div class="col-sm-3">
+						<div class="droppable" data-id="{{id}}">{{data}}</div>
+					</div>
+				{{/question_options.group_text}}
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				{{#question_options.group_items}}
+					<div class="col-sm-2 draggable">
+						{{.}}
+					</div>
+				{{/question_options.group_items}}
+			</td>
+		</tr>
+	</script>
+
+	<script id="tmplOption6" type="x-tmpl-mustache">
+		<tr>
+			<td><input class="form-control" placeholder="Nhập câu trả lời"></td>
+		</tr>
+	</script>
+
+	<script id="tmplOption7" type="x-tmpl-mustache">
+		<tr class="alert" style="display: none">
+			<td><label class="label label-danger">Vượt quá giới hạn từ</label></td>
+		</tr>
+		<tr>
+			<td><textarea id="textarea-{{question_id}}"></textarea></td>
+		</tr>
+	</script>
+
+	<script id="tmplOption8" type="x-tmpl-mustache">
+		{{#question_options}}
+		<tr data-id="{{id}}">
+			<td class="index">{{index}}. </td>
+			<td>{{ &option_text }}</td>
+		</tr>
+		{{/question_options}}
+	</script>
+
+	<script id="tmplOption9" type="x-tmpl-mustache">
+		<tr>
+			<td>
+				<div class="text-center" style="display: none" id="load-file"><i class="fa fa-cog fa-spin fa-4x fa-fw"></i></div>
+				<div class="upload"></div>
+			</td>
+		</tr>
+	</script>
+
+	<script>
+		var urlQuestion = "<?= $this->url('question', ['force_canonical' => true]) ?>";
+		var urlTest = "<?= $this->url('test', ['force_canonical' => true]) ?>";
+		var urlResult = "<?= $this->url('result', ['force_canonical' => true]) ?>";
+		<?= $preview == true ? "var preview = true;" : "" ?>
+		var time_limit = <?= $test['time_limit'] ?>;
+		var result_id = -1;
+		var time_offset = 0;
+	</script>
+
+	<?= $this->inlineScript()->setFile($this->basePath('/js/app/test_start.js'))?>
+
+	<?php
+
+	if(!empty($resume))
+	{
+		if($resume['test']['test_id'] == $test['test_id'])
+		{
+			$date1 = strtotime($resume['result']['time_start']);
+			$date2 = strtotime(date_format(date_create(), 'Y-m-d H:i:s'));
+			$offset = $date2 - $date1;
+			echo <<< EOD
+				<script>
+					$('#modalResume').modal('show');
+					$('#modalResume .modal-body').html("Bạn đang có bài kiểm tra chưa làm xong lúc <strong>{$resume['result']['time_start']}</strong>");
+
+					$('#modalResume .btnConfirm').click(function(){
+						$('#modalResume').modal('hide');
+						result_id = {$resume['result']['result_id']};
+						time_offset = $offset;
+					});
+
+				</script>
+EOD;
+		}
+		else
+		{
+			$url = $this->url('test/start', [ 'id' => $resume['test']['test_id'] ]);
+			echo <<< EOD
+				<script>
+					$('#modalResume').modal('show');
+					$('#modalResume .modal-body').html("Bạn đang có bài kiểm tra chưa làm xong lúc <strong>{$resume['result']['time_start']}<strong><br/><strong>Đề thi: {$resume['test']['test_name']}</strong>");
+					$('#modalResume .btnConfirm').text('Chuyển hướng');
+					$('#modalResume .btnConfirm').click(function(){
+
+						window.location.href = '$url';
+
+					});
+				</script>
+
+EOD;
+		}
+	}
+
+	?>
+</div>
+
+<?php endif;?>
+</div>
+
+<style>
+
+	@media screen and (min-width: 1024px)
+	{
+		.info-test{
+			position: fixed;
+			top: 51px;
+			left: 0;
+			background: white;
+			padding: 5px;
+			border: 1px solid black;
+			z-index: 1100;
+			width: 120px;
+		}
+
+		.pagination>li:first-child>a, .pagination>li:last-child>a{
+			margin-left: -1px;
+			border-radius: 0;
+		}
+	}
+
+	.img-test{
+		margin-bottom: 10px;
+		text-align: center;
+	}
+
+	.img-test img{
+		height: 120px;
+		width: auto;
+	}
+
+</style>

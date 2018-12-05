@@ -1,0 +1,115 @@
+<?= $this->headTitle('Chỉnh sửa thông tin tài khoản')?>
+<div class="container">
+	<div class="col-sm-6 col-sm-offset-3">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Sửa thông tin tài khoản</h3>
+			</div>
+			<div class="panel-body">
+				<?php
+					if(isset($error))
+					{
+						if($error)
+						{
+							$alert =<<<EOD
+									<div class="alert alert-danger">
+										<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+										<strong>Lỗi!</strong> $msg
+									</div>
+EOD;
+						}
+						else
+						{
+							$alert =<<<EOD
+									<div class="alert alert-success">
+										<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+										<strong>Thông báo!</strong> $msg
+									</div>
+EOD;
+						}
+
+						echo $alert;
+					}
+				?>
+				<?php
+
+					$fullname = $form->get('fullname');
+					$fullname->setAttribute('class', 'form-control');
+					$fullname->setAttribute('placeholder', 'Nhập họ và tên');
+					$fullname->setAttribute('required', 'required');
+
+					if(!isset($pageAdmin))
+					{
+						$old_password = $form->get('old_password');
+						$old_password->setAttribute('class', 'form-control');
+						$old_password->setAttribute('placeholder', 'Nhập lại mật khẩu cũ');
+
+						$password = $form->get('password');
+						$password->setAttribute('class', 'form-control');
+						$password->setAttribute('placeholder', 'Nhập mật khẩu');
+					}
+
+					$email = $form->get('email');
+					$email->setAttribute('class', 'form-control');
+					$email->setAttribute('placeholder', 'Nhập địa chỉ Email');
+
+					$submit = $form->get('submit');
+					$submit->setAttribute('value', 'Chỉnh sửa thông tin');
+					$submit->setAttribute('class', 'btn btn-success');
+
+					$form->prepare();
+
+					echo $this->form()->openTag($form);
+				?>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-address-card-o" aria-hidden="true"></i>
+	</div>
+						<?= $this->formElement($fullname) ?>
+					</div>
+					<?= $this->formElementErrors()->render($fullname, ['class' => 'help-block']) ?>
+				</div>
+
+				<?php if(!isset($pageAdmin)): ?>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i>
+	</div>
+						<?= $this->formElement($old_password) ?>
+					</div>
+					<?= $this->formElementErrors()->render($old_password, ['class' => 'help-block']) ?>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i>
+	</div>
+						<?= $this->formElement($password) ?>
+					</div>
+					<?= $this->formElementErrors()->render($password, ['class' => 'help-block']) ?>
+				</div>
+
+				<?php endif; ?>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-envelope-o" aria-hidden="true"></i>
+	</div>
+						<?= $this->formElement($email) ?>
+					</div>
+					<?= $this->formElementErrors()->render($email, ['class' => 'help-block']) ?>
+				</div>
+
+				<?php
+
+				echo $this->formSubmit($submit);
+				echo $this->formHidden($form->get('user_id'));
+				echo $this->formHidden($form->get('role_id'));
+				echo $this->form()->closeTag($form);
+				?>
+			</div>
+		</div>
+	</div>
+</div>

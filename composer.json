@@ -1,0 +1,59 @@
+{
+    "name": "10Quiz",
+    "description": "Make quiz online",
+    "type": "project",
+    "keywords": [
+        "framework",
+        "mvc",
+        "zf"
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^5.6 || ^7.0",
+        "zendframework/zend-component-installer": "^1.0 || ^0.7 || ^1.0.0-dev@dev",
+        "zendframework/zend-mvc": "^3.0.1",
+        "zfcampus/zf-development-mode": "^3.0",
+        "zendframework/zend-db": "^2.8.1",
+        "zendframework/zend-mvc-form": "^1.0",
+        "zendframework/zend-json": "^3.0",
+        "zendframework/zend-log": "^2.9",
+        "zendframework/zend-mvc-i18n": "^1.0",
+        "zendframework/zend-mvc-plugins": "^1.0.1",
+        "zendframework/zend-psr7bridge": "^0.2.2",
+        "zendframework/zend-session": "^2.7.1",
+        "zendframework/zend-servicemanager-di": "^1.0",
+        "zendframework/zend-crypt": "^3.2",
+        "zendframework/zend-navigation": "^2.8",
+        "zendframework/zend-mail": "^2.8",
+        "zendframework/zend-paginator": "^2.7",
+        "zendframework/zend-mvc-plugin-fileprg": "^1.0",
+        "zendframework/zend-math": "^3.1",
+        "phpoffice/phpspreadsheet": "^1.5",
+        "zendframework/zend-permissions-rbac": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "User\\": "module/User/src",
+            "Quiz\\": "module/Quiz/src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            
+        }
+    },
+    "extra": [],
+    "scripts": {
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "development-disable": "zf-development-mode disable",
+        "development-enable": "zf-development-mode enable",
+        "development-status": "zf-development-mode status",
+        "post-create-project-cmd": [
+            "@development-enable"
+        ],
+        "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
+        "test": "phpunit"
+    }
+}

@@ -1,0 +1,166 @@
+<?php
+
+	if(isset($email))
+	{
+		echo '<div class="alert alert-success">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			<strong>Thông báo!</strong> Bạn cần kích hoạt tài khoản trong địa chỉ email '. $email .'</div>';
+	}
+
+$this->headMeta()
+->setProperty('og:title', '10Quiz ' .(isset($admin) ? 'Tạo tài khoản' : 'Đăng ký'));
+
+if(!isset($admin))
+	$this->headMeta()
+	->setProperty('og:url', $this->url('register', [], [ 'force_canonical' => true ]));
+
+echo $this->headMeta();
+echo $this->headTitle(isset($admin) ? 'Tạo tài khoản' : 'Đăng ký');
+
+?>
+
+
+<?php
+$fullname = $formUser->get('fullname');
+$fullname->setAttribute('class', 'form-control');
+$fullname->setAttribute('placeholder', 'Nhập họ và tên');
+$fullname->setAttribute('required', 'required');
+
+$username = $formUser->get('username');
+$username->setAttribute('class', 'form-control');
+$username->setAttribute('placeholder', 'Nhập tên tài khoản');
+$username->setAttribute('required', 'required');
+
+$password = $formUser->get('password');
+$password->setAttribute('class', 'form-control');
+$password->setAttribute('placeholder', 'Nhập mật khẩu');
+$password->setAttribute('required', 'required');
+
+$rpassword = $formUser->get('rpassword');
+$rpassword->setAttribute('class', 'form-control');
+$rpassword->setAttribute('placeholder', 'Nhập lại mật khẩu');
+$rpassword->setAttribute('required', 'required');
+
+$email = $formUser->get('email');
+$email->setAttribute('class', 'form-control');
+$email->setAttribute('placeholder', 'Nhập địa chỉ Email');
+$email->setAttribute('required', 'required');
+
+$submit = $formUser->get('submit');
+$submit->setAttribute('value', 'Đăng ký');
+$submit->setAttribute('class', 'btn btn-success btn-block');
+
+if(isset($admin))
+{
+	$formUser->setAttribute('action', $this->url('user_manager/create'));
+	$submit->setAttribute('value', 'Tạo tài khoản');
+}
+
+$formUser->prepare();
+
+?>
+
+<div class="container">
+    <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"><?= isset($admin) ? 'Tạo tài khoản' : 'Đăng ký' ?></h3>
+            </div>
+            <div class="panel-body">
+
+            	<?php 
+
+            		if(!empty($register))
+            		{
+            			echo "<div class='alert alert-success'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Đăng ký thành công</div>";
+            		}
+
+            	?>
+
+			<?= $this->form()->openTag($formUser);?>
+				<h4><label class="label label-default">Vai trò</label></h4>
+				<div class="form-group" id="radio_role">
+					<?php if(isset($admin)): ?>
+					<div class="col-sm-4">
+						<label for="role_1">Người ra đề</label>
+						<input type="radio" name="role_id" id="role_1" value="1" required>
+					</div>
+
+					<div class="col-sm-4">
+						<label for="role_2">Người làm bài</label>
+						<input type="radio" name="role_id" id="role_2" value="2">
+					</div>
+					<div class="col-sm-4">
+						<label for="role_3">Người quản trị</label>
+						<input type="radio" name="role_id" id="role_3" value="3">
+					</div>
+					<?php else: ?>
+					<div class="col-sm-6">
+						<label for="role_1">Người ra đề</label>
+						<input type="radio" name="role_id" id="role_1" value="1" required>
+					</div>
+
+					<div class="col-sm-6">
+						<label for="role_2">Người làm bài</label>
+						<input type="radio" name="role_id" id="role_2" value="2">
+					</div>
+					<?php endif; ?>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-address-card-o" aria-hidden="true"></i></div>
+						<?= $this->formElement($fullname) ?>
+					</div>
+					<?= $this->formElementErrors()->render($fullname, ['class' => 'help-block']) ?>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-user" aria-hidden="true" style="width: 13px"></i></div>
+						<?= $this->formElement($username) ?>
+					</div>
+					<?= $this->formElementErrors()->render($username, ['class' => 'help-block']) ?>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i></div>
+						<?= $this->formElement($password) ?>
+					</div>
+					<?= $this->formElementErrors()->render($password, ['class' => 'help-block']) ?>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i></div>
+						<?= $this->formElement($rpassword) ?>
+					</div>
+					<?= $this->formElementErrors()->render($rpassword, ['class' => 'help-block']) ?>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-envelope-o" aria-hidden="true"></i></div>
+						<?= $this->formElement($email) ?>
+					</div>
+					<?= $this->formElementErrors()->render($email, ['class' => 'help-block']) ?>
+				</div>
+
+			<?php
+			echo $this->formSubmit($submit);
+			echo $this->form()->closeTag($formUser);
+			?>
+
+			</div>
+        </div>
+    </div>
+</div>
+
+<style>
+	
+	form .help-block{
+		color: red;
+	}
+
+</style>

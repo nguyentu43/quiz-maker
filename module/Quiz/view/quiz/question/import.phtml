@@ -1,0 +1,65 @@
+<?php
+
+	echo $this->headMeta()
+	->setProperty('og:title', '10Quiz Nhập câu hỏi từ tập tin');
+
+	echo $this->headTitle('Nhập câu hỏi từ tập tin');
+
+?>
+
+<div class="col-sm-8 col-sm-offset-2">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Nhập câu hỏi từ tập tin</h3>
+		</div>
+		<div class="panel-body">
+			<?php
+
+				if(isset($error))
+				{
+					$alert = <<< EOD
+						<div class="alert alert-danger">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							<strong>Thông báo!</strong> $error
+						</div>
+EOD;
+					echo $alert;
+				}
+
+				if(isset($msg))
+				{
+					$alert = <<< EOD
+						<div class="alert alert-success">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							<strong>Thông báo!</strong> $msg
+						</div>
+EOD;
+					echo $alert;
+				}
+
+				$upload = $form->get('file');
+				$upload->setAttribute('class', 'form-control');
+				$upload->setAttribute('accept', 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+				$submit = $form->get('submit');
+				$submit->setAttribute('class', 'btn btn-primary');
+
+				$form->prepare();
+				echo $this->form()->openTag($form);
+			?>
+
+			<div class="form-group">
+				<?= $this->formFile($upload) ?>
+			</div>
+
+			<?= $this->formElement($submit) ?>
+
+			<?php
+				echo $this->form()->closeTag($form);
+			?>
+		</div>
+		<div class="panel-footer">
+			<a href="<?= $this->url('question', ['action' => 'import'], ['query' => ['template' => '1']]) ?>">Tập tin mẫu</a>
+		</div>
+	</div>
+</div>

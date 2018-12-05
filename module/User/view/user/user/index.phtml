@@ -1,0 +1,87 @@
+<div class="container">
+<?= $this->headTitle('Quản lý tài khoản')?>
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/datatables.min.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/dataTables.bootstrap.min.js'))?>
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-button">
+			<a class="btn btn-default btn-sm pull-right" href="<?= $this->url('user_manager/create')?>"><i class="fa fa-plus"></i> Thêm tài khoản mới</a>
+			<h3 class="panel-title">Danh sách tài khoản</h3>
+		</div>
+		<div class="panel-body">
+			
+			<div class="table-responsive">
+				<table class="table table-hover table-bordered">
+					<thead>
+						<tr>
+							<th>STT</th><th>Tài khoản</th><th>Họ và tên</th><th>Địa chỉ email</th><th>Vai trò</th><th>Thao tác</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+
+							$i = 1;
+
+							foreach ($users as $u) {
+								
+								$url_edit = $this->url('user_manager/edit', ['id' => $u['user_id']]);
+
+								$fullname = $u['fullname'];
+								$role_name = $u['name'];
+
+								if(isset($u['verify_teacher']))
+								{
+									if($u['verify_teacher'] == 1)
+										$role_name.=' <i class="fa fa-info-circle verify text-success" aria-hidden="true" data-toggle="tooltip" title="Đã phê duyệt"></i>';
+									else
+										$role_name.=' <i class="fa fa-info-circle verify text-warning" aria-hidden="true" data-toggle="tooltip" title="Chưa phê duyệt"></i>';
+								}
+
+								$tr = <<< EOD
+								<tr>
+									<td>$i</td>
+									<td>{$u['username']}</td>
+									<td>{$u['fullname']}</td>
+									<td>{$u['email']}</td>
+									<td>$role_name</td>
+									<td>
+										<a href="$url_edit" class="btn btn-success btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i> Chỉnh sửa</a>
+									</td>
+								</tr>
+EOD;
+
+								echo $tr;
+								$i++;
+
+							}
+
+						?>
+					</tbody>
+				</table>
+			</div>
+
+			<script>
+				$().ready(function(e){
+
+					$('table').DataTable({
+						language: {
+							'lengthMenu': 'Hiện thị _MENU_ kết quả trên bảng',
+							'zeroRecords': 'Không kết quả nào',
+							'info': 'Hiển thị _PAGE_ trên _PAGES_',
+							'search': 'Tìm kiếm',
+							'paginate': {
+								"first": "Đầu",
+								"last": "Cuối",
+								"previous": "Trước",
+								"next": "Sau"
+							}
+						}
+					});
+
+					$('.verify').tooltip({ placement: 'right' });
+
+				});
+			</script>
+
+		</div>
+	</div>
+</div>

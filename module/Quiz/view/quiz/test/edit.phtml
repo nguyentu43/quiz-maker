@@ -1,0 +1,390 @@
+<div class="container">
+<?php if(!empty($error)): ?>
+
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			Thông báo
+		</h3>
+	</div>
+	<div class="panel-body">
+		<?= $error ?>
+	</div>
+</div>
+
+<?php else: ?>
+
+<?php
+
+	$this->headMeta()
+	->setProperty('og:title', '10Quiz '. 'Chỉnh sửa - '.$test->test_name)
+	->setProperty('og:url', $this->url('test/edit', [ 'test_id' => $test->test_id, [ 'force_canonical' => true ] ]));
+
+	if(!empty($test->img))
+	{
+		$img = $this->basePath('img/tests/'.$test->img);
+		$this->headMeta()
+		->setProperty('og:image', $img);
+	}
+
+	echo $this->headMeta();
+
+	echo $this->headTitle('Chỉnh sửa - '. $test->test_name);
+
+?>
+
+<?php if(!empty($message)): ?>
+
+<div class="alert alert-<?= $message['type'] ?>">
+	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+	<?= $message['content'] ?>
+</div>
+
+<?php endif; ?>
+
+<div class="panel panel-default panel-border-top">
+	<div class="panel-body">
+		<div class="text-center">
+			<h4><strong><?= $test->test_name ?></strong></h4>
+		</div>
+		<div>
+			<a href="<?= $this->url('result/list', ['test_id' => $test['test_id']])?>?preview=true" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-list" aria-hidden="true"></i>
+ Kết quả</a>
+			<a href="<?= $this->url('test/start', ['id' => $test['test_id']])?>?preview=true" target="_blank" class="btn btn-default btn-sm"><i class="fa fa-eye" aria-hidden="true"></i>
+ Xem trước</a>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-primary" >
+	<div class="panel-heading panel-button">
+		<h5 class="panel-title">
+			Chỉnh sửa đề
+			<button type="button" id="btn-test-collapse" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#panel-edit"> <i class="fa fa-expand" aria-hidden="true"></i> Mở rộng</button>
+		</h5>
+	</div>
+	<div class="panel-body collapse" id="panel-edit">
+
+		<div role="tabpanel">
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active">
+					<a href="#edit" aria-controls="edit" role="tab" data-toggle="tab">Thông tin</a>
+				</li>
+				<li role="presentation">
+					<a href="#delete" aria-controls="delete" role="tab" data-toggle="tab">Xoá đề thi</a>
+				</li>
+			</ul>
+		
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="edit">
+
+					<form method="POST" class="form-horizontal" role="form" name="formTest" enctype="multipart/form-data">
+
+						<div class="panel panel-default">
+							<div class="panel-body">
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Mở đề</label>
+									<div class="col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input name="is_enable" <?= $test['is_enable'] == 1 ? 'checked="checked"' : '' ?>" type="checkbox">
+											</label>
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="control-label col-sm-3">Tên đề thi</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="test_name" placeholder="Nhập tên bài kiểm tra" value="<?= $test['test_name']?>" required>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Danh mục đề</label>
+									<div class="col-sm-9">
+										<select name="category_test_id" id="inputCategory_test_id" class="form-control" required="required">
+											<?php
+												foreach ($categories_test as $c) {
+													if($test['category_test_id'] == $c->id)
+														echo "<option value='$c->id' selected>$c->name</option>";
+													else
+														echo "<option value='$c->id'>$c->name</option>";
+												}
+											?>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Hình bìa</label>
+									<div class="col-sm-9">
+										<?php 
+
+											if(!empty($test['img']))
+												echo "<img style='width: 100px; height: auto' src='".$this->basePath('img/tests/'.$test['img'])."' />";
+
+										?>
+										<input name="img" type="file" accept="image/*" />
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Mô tả</label>
+									<div class="col-sm-9">
+										<textarea class="form-control" name="description" id="test-description" placeholder="Nhập mô tả"><?= $test['description']?></textarea>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Dạng đề</label>
+									<div class="col-sm-9">
+										<select name="is_private" class="form-control" required="required">
+											<option value="0" <?= $test['is_private'] == 0 ? 'selected' : ''?>>Công khai</option>
+											<option value="1" <?= $test['is_private'] == 1 ? 'selected' : ''?>>Ẩn</option>
+										</select>
+									</div>
+								</div>
+
+								<?php if($test['is_private']): ?>
+								<div class="form-group">
+									<label class="control-label col-sm-3">Mã đề thi</label>
+									<div class="col-sm-9">
+										<input class="form-control" name="test_code" placeholder="Nhập tên bài kiểm tra" value="<?= $test['test_code']?>" required>
+									</div>
+								</div>
+								<?php endif; ?>
+
+							</div>
+						</div>
+
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									Thông tin khác
+								</h3>
+							</div>
+							<div class="panel-body">
+								
+								<div class="form-group">
+									<label class="control-label col-sm-3">Đặt thời gian làm bài </label>
+									<div class="col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" id="is_enable_time" <?= !empty($test['time_limit']) ? 'checked="checked"': '' ?>>
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group" <?= empty($test['time_limit']) ? 'style="display:none"': '' ?>>
+									<label class="control-label col-sm-3">Thời gian làm bài</label>
+									<div class="col-sm-4">
+										<div class="input-group">
+											<input class="form-control" name="time_limit" min="0" max="500" type="number" placeholder="Nhập thời gian làm bài (phút)" value="<?= $test['time_limit']?>">
+											<span class="input-group-addon">phút</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Đặt lịch làm bài </label>
+									<div class="col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" id="is_enable_schedule" <?= !empty($test['start_time']) ? 'checked="checked"': '' ?>>
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group" <?= empty($test['start_time']) ? 'style="display:none"': '' ?>>
+									<label class="control-label col-sm-3">Thời gian mở đề</label>
+									<div class="col-sm-4">
+										<div class="input-group">
+											<input class="form-control" name="start_time" placeholder="Thời gian mở đề" value="<?= $test['start_time']?>">
+											<span class="input-group-addon">
+						                        <span class="glyphicon glyphicon-calendar"></span>
+						                    </span>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group" <?= empty($test['end_time']) ? 'style="display:none"': '' ?>>
+									<label class="control-label col-sm-3">Thời gian đóng đề</label>
+									<div class="col-sm-4">
+										<div class="input-group">
+											<input class="form-control" name="end_time" placeholder="Thời gian đóng đề" value="<?= $test['end_time']?>">
+											<span class="input-group-addon">
+						                    	<span class="glyphicon glyphicon-calendar"></span>
+						                    </span>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Yêu cầu đăng nhập</label>
+									<div class="col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="is_login" <?= $test['is_login'] > 0 ? 'checked="checked"': '' ?>>
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Đặt số lần làm bài </label>
+									<div class="col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" id="is_attemps" <?= $test['attemps'] > 0 ? 'checked="checked"': '' ?>>
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group" <?= $test['attemps'] == 0 ? 'style="display:none"': '' ?>>
+									<label class="control-label col-sm-3">Số lần làm bài </label>
+									<div class="col-sm-4">
+										<input class="form-control" name="attemps" min="0" max="100" type="number" placeholder="Nhập số lần làm bài" value="<?= $test['attemps']?>">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Cho phép đảo câu </label>
+									<div class="col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="shuffle" <?= $test['shuffle'] ? "checked" : "" ?> />
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-sm-3">Hiện đáp án sau khi làm bài </label>
+									<div class="col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="show_point" <?= $test['show_point'] ? "checked" : "" ?> />
+											</label>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+						<input type="hidden" name="test_id" value="<?= $test['test_id']?>">
+
+						<div class="form-group">
+							<div class="col-sm-9 col-sm-offset-3">
+								<button type="submit" class="btn btn-success">Chỉnh sửa</button>
+							</div>
+						</div>
+					</form>
+
+				</div>
+				<div role="tabpanel" class="tab-pane" id="delete">
+
+					<div class="panel panel-danger panel-border-top">
+						<div class="panel-body">
+							Lưu ý: Các kết quả của đề thi sẽ bị xoá sau khi xoá đề thi này.
+						</div>
+						<div class="panel-footer">
+							<button type="button" class="btn btn-danger" data-target="#modalDeleteTest" data-toggle="modal">Xoá đề thi</button>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading panel-button">
+			<h5 class="panel-title">
+				Chọn câu hỏi ngẫu nhiên từ danh mục
+				<button type="button" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#panel-random"> <i class="fa fa-expand" aria-hidden="true"></i> Mở rộng</button>
+			</h5>
+		</div>
+		<div class="panel-body collapse" id="panel-random">
+			<form method="post" class="form-horizontal">
+				<input type="hidden" name="action" value="update_category_random" />
+				<table class="table table-bordered" style="width: 50%">
+					<thead>
+						<tr><th>Danh mục</th><th>Số câu</th></tr>
+					</thead>
+					<tbody>
+						<?php
+
+							if(!empty($test['random_from_category']))
+								$test['random_from_category'] = json_decode($test['random_from_category'], true);
+
+							foreach ($categories as $category) {
+
+								$value = empty($test['random_from_category'][$category['category_id']]) ? 0 : $test['random_from_category'][$category['category_id']];
+
+								echo <<< EOD
+									<tr>
+										<td class="col-sm-8">{$category['category_name']}</td>
+										<td>
+											<input class="form-control" style="display: inline-block; width: auto" name="c{$category['category_id']}" type="number" min="0" max="{$category['question_count']}" value="$value"/> câu
+										</td>
+									</tr>
+
+EOD;
+							}
+
+						?>
+					</tbody>
+				</table>
+				<button type="submit" class="btn btn-success">Cập nhật</button>
+			</form>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalDeleteTest">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Xoá đề thi</h4>
+				</div>
+				<div class="modal-body">
+					Bạn có thực sự muốn xoá đề thi này?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+					<button type="button" class="btn btn-danger" id="btnDeleteTest">Đồng ý</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var urlEdit = "<?= $this->url('test/edit', ['id' => $test['test_id']])?>";
+		var urlTest = "<?= $this->url('test') ?>";
+		var defaultTest = <?= json_encode($test)?>;
+
+		tinyMCE.init({
+			selector: '#test-description'
+		});
+		
+	</script>
+	<?= $this->inlineScript()->setFile($this->basePath('/js/app/test.js')) ?>
+</div>
+
+<?php
+	if(!isset($users))
+		echo $this->partial("quiz/question/index.phtml", ['test_id' => $test['test_id']]);
+	else
+		echo $this->partial("quiz/question/index.phtml", ['test_id' => $test['test_id'], 'users' => $users, 'admin' => $admin]);
+?>
+
+<?php endif; ?>

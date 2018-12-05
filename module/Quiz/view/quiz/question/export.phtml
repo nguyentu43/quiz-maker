@@ -1,0 +1,14 @@
+<?= $this->headTitle('Sao lưu câu hỏi') ?>
+
+<?php if(isset($error)): ?>
+
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title">Thông báo</h3>
+	</div>
+	<div class="panel-body">
+		<?= $error ?>
+	</div>
+</div>
+
+<?php endif; ?>

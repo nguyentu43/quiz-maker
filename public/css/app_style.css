@@ -1,0 +1,230 @@
+html{
+	height: 100%;
+	box-sizing: border-box;
+}
+
+body{
+	position: relative;
+	margin: 0;
+	min-height: 100%;
+	padding-bottom: 100px;
+	background-color: #EEEEEE;
+	font-size: 15px;
+}
+
+.navbar-default .navbar-nav>li>a{
+	color:white;
+}
+
+.navbar-default .navbar-brand{
+	color: white;
+}
+
+.navbar-default{
+	background-color: #00796B;
+	border-color: #00796B;
+	color: white;
+}
+
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover{
+	background-color: white;
+}
+
+.navbar-default .navbar-toggle{
+	background-color: white;
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form{
+	border-color: #00796B;
+}
+
+.categories{
+	margin-bottom: 10px;
+}
+
+.categories .list{
+	text-align: left;
+}
+
+.categories h4.title{
+	padding-bottom: 2px;
+	border-bottom: 2px solid #00796B;
+	font-weight: bold;
+}
+
+.categories .list .panel{
+	margin-left: 10px;
+}
+
+.slick-track{
+	margin-left: 0;
+}
+
+.slick-prev:before, .slick-next:before{
+	color: #546E7A;
+}
+
+.slick-prev, .slick-next{
+	margin-top: -10px;
+}
+
+footer .glyphicon {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+footer{
+	background-color: #00796B;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 10px 0;
+	color: white;
+}
+
+.panel-button .btn{
+	margin-top: -7px;
+}
+
+.jumbotron{
+	background-color: #009688;
+	color: white;
+}
+
+.jumbotron img{
+	width: 200px;
+	height: 200px;
+}
+
+.input-group{
+	margin-bottom: 5px;
+}
+
+.ms-container{
+	width: auto;
+}
+
+.table.table-option>tbody>tr>td{
+	vertical-align: middle;
+}
+
+.table.table-option>tbody>tr>td.index{
+	text-align: center;
+	width: 50px;
+}
+
+.progress{
+	background-color: #dddddd;
+}
+
+.panel-question-text{
+	border-color: black;
+}
+
+.table>tbody>tr.tr-primary>td{
+	background-color: #337ab7;
+	color: white;
+}
+
+.pagination>li.pagination-primary>a, .pagination>li.pagination-primary>span{
+	background-color: #337ab7;
+	color: white;
+}
+
+.table-option .draggable{
+	background: linear-gradient(#ffffff, #e9e9e9);
+	border: solid 1px grey;
+	margin: 2.5px;
+	padding: 5px;
+}
+
+.table-option .droppable{
+	min-height: 100px;
+	border: 1px solid grey;
+	margin: 2.5px;
+	padding: 5px;
+}
+
+.ui-selectable tr{
+	background: gray;
+}
+
+tr.ui-selected{
+	background: yellow;
+}
+
+.table-option-edit > tbody > tr > td, .table-option > tbody > tr > td{
+	padding: 5px;
+	margin: 0;
+	border: 0;
+}
+
+.ui-sortable-handle, .ui-sortable tr {
+}
+
+.table-option, .table-option-edit{
+	border-spacing: 0 10px;
+	border-collapse: separate;
+}
+
+.ui-sortable-placeholder{
+	background: #eee;
+	height: 100px;
+	border: 1px solid black;
+}
+
+.input_fill_word{
+	width: 70px;
+	border:0;
+	border-bottom: 1px dotted black;
+	text-align: center;
+}
+
+.table-option .source{
+	border: 1px solid black;
+	padding: 5px;
+}
+
+.table-option .target{
+	border: 1px solid black;
+	padding: 5px
+}
+
+.mce-fullscreen{
+	z-index: 1200 !important;
+}
+
+.panel-test .img-test img{
+	height: 120px;
+	width: auto;
+	display: inline;
+}
+
+.panel-test .img-test{
+	text-align: center;
+	padding: 5px;
+	border-bottom: 1px solid #eee;
+}
+
+.panel-test .panel-body{
+	padding: 5px 10px;
+}
+
+.panel-test .panel-body a{
+	color: white;
+}
+
+.panel-test .panel-body .label{
+	margin-right: 2px;
+}
+
+.panel-test .panel-body h4{
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.panel-test .panel-footer a.btn{
+	margin-bottom: 2px;
+}

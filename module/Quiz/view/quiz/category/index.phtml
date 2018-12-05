@@ -1,0 +1,65 @@
+
+<?php
+
+	echo $this->headMeta()
+	->setProperty('og:title', '10Quiz Quản lí danh mục chính');
+
+	echo $this->headTitle('Quản lí danh mục chính');
+
+?>
+
+<div class="container">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Danh mục</h3>
+		</div>
+		<div class="panel-body">
+			<?php if(isset($error)): ?>
+				<div class="alert alert-danger">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					<strong>Lỗi!</strong> <?= $error ?>
+				</div>
+			<?php endif; ?>
+			<?php if(isset($message)): ?>
+				<div class="alert alert-success">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					<strong>Thông báo!</strong> <?= $message ?>
+				</div>
+			<?php endif; ?>
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>STT</th><th class="col-sm-8">Tên danh mục</th><th>Thao tác</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+						$i = 1;
+						foreach($list as $item)
+						{
+							$tr = <<< EOD
+								<tr>
+									<form method="post">
+										<td>$i</td>
+										<td><input type="text" name="name" value="$item->name" class="form-control" placeholder='Nhập tên danh mục'/></td>
+											<input type="hidden" name="id" value="$item->id"/>
+										<td>
+											<div class="btn-group">
+											<button type="submit" name="btnEdit" class="btn btn-sm btn-success"><i class="fa fa-pencil" aria-hidden="true"></i> Sửa</button>
+											<button type="submit" name="btnDelete" class="btn btn-sm btn-danger"><i class="fa fa-times" aria-hidden="true"></i> Xoá</button>
+											<div>
+										</td>
+									</form>
+								</tr>
+EOD;
+							echo $tr;
+							$i++;
+						}
+
+						echo "<tr><form method='post'><td>$i</td><td><input type='text' name='name' class='form-control' placeholder='Nhập tên danh mục'/></td><td><button type='submit' name='btnAdd' class='btn btn-sm btn-primary'><i class='fa fa-plus-square-o' aria-hidden='true'></i> Thêm</button></td></form></tr>";
+					?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,77 @@
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/datatables.min.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/dataTables.bootstrap.min.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/RowGroup-1.0.2/js/dataTables.rowGroup.min.js'))?>
+<?=  $this->headTitle('Kết quả đề thi')?>
+
+<?php
+    echo $this->headMeta()
+	->setProperty('og:title', '10Quiz Kết quả thi');
+    echo  $this->headTitle('Kết quả thi');
+?>
+
+<div class="container">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Kết quả thi</h3>
+		</div>
+		<div class="panel-body">
+			<?php if($result->count() == 0): echo "Không có kết quả nào"; else: ?>
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered table-condensed v-align-middle" id="table-result" width="100%">
+						<thead>
+							<tr>
+								<th>STT</th>
+								<th>Tên đề thi</th>
+								<th>Tỉ lệ</th>
+								<th>Số câu đúng</th>
+								<th>Điểm</th>
+								<th>Ngày làm bài</th>
+								<th>Thời gian làm bài</th>
+								<th>Xem chi tiết</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+								$i = 1;
+								foreach ($result as $row) {
+
+									$start = date_create($row['time_start']);
+									$submit = date_create($row['time_submit']);
+									$diff = date_diff($start, $submit)->format('%H:%I:%S');
+									$date = date_format($start, 'd/m/Y H:i:s');
+
+									if($row['point'] < 0)
+										$row['point'] = 0;
+
+									$per_point = round(($row['point'] / $row['total_point'])*100);
+
+									$url = $this->url('result/detail', ['result_id' => $row['result_id']]);
+									$per = round(($row['count'] / $row['question_count'])*100);
+									$tr = <<< EOD
+
+									<tr>
+										<td>$i</td>
+										<td>{$row['test_name']}</td>
+										<td>$per%</td>
+										<td>{$row['count']}/{$row['question_count']}</td>
+										<td>{$row['point']}/{$row['total_point']} ($per_point%)</td>
+										<td>$date</td>
+										<td>$diff</td>
+										<td><a class="btn btn-default btn-sm" target="_blank" href='$url'><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a></td>
+									</tr>
+
+EOD;
+									echo $tr;
+
+									$i++;
+								}
+							?>
+						</tbody>
+					</table>
+				</div>
+				<?php  endif; ?>
+			</div>
+			<?= $this->inlineScript()->setFile($this->basePath('js/app/index_student.js')) ?>
+		</div>
+	</div>
+</div>

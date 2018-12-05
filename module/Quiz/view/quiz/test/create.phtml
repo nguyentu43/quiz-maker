@@ -1,0 +1,291 @@
+<div class="container">
+<?php if(isset($error)): ?>
+
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title">Thông báo</h3>
+	</div>
+	<div class="panel-body">
+		<?= $error ?>
+	</div>
+</div>
+
+<?php else: ?>
+
+<?php
+
+	echo $this->headMeta()
+	->setProperty('og:title', '10Quiz Tạo đề thi');
+
+	echo $this->headTitle('Tạo đề thi');
+
+?>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		Tạo đề thi
+	</div>
+	<div class="panel-body">
+		<?php
+			if(isset($alert))
+			{
+				echo '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Thông báo!</strong> '.$alert.'</div>';
+			}
+		?>
+		<form method="POST" enctype="multipart/form-data" class="form-horizontal" role="form" name="form">
+
+			<?php
+				if(isset($error))
+				{
+					$alert = <<< EOD
+						<div class="alert alert-danger">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							<strong>Thông báo!</strong> $error
+						</div>
+EOD;
+					echo $alert;
+				}
+			?>
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+					
+					<div class="form-group">
+						<label class="control-label col-sm-3">Tên đề thi</label>
+						<div class="col-sm-9">
+							<input class="form-control" name="test_name" placeholder="Nhập tên đề thi" required>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Danh mục đề</label>
+						<div class="col-sm-9">
+							<select name="category_test_id" id="inputCategory_test_id" class="form-control" required="required">
+								<?php
+									foreach ($categories_test as $c) {
+										echo "<option value='$c->id'>$c->name</option>";
+									}
+								?>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Hình bìa</label>
+						<div class="col-sm-9">
+							<input name="img" type="file" accept="image/*">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Mô tả</label>
+						<div class="col-sm-9">
+							<textarea class="form-control" id="test-description" name="description" placeholder="Nhập mô tả"></textarea>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Dạng đề</label>
+						<div class="col-sm-3">
+							<select name="is_private" class="form-control" required="required">
+								<option value="0">Công khai</option>
+								<option value="1">Ẩn</option>
+							</select>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Thông tin khác</h3>
+				</div>
+				<div class="panel-body">
+					
+					<div class="form-group">
+						<label class="control-label col-sm-3">Đặt thời gian làm bài </label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" name="is_enable_time">
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group" style="display:none">
+						<label class="control-label col-sm-3">Thời gian làm bài</label>
+						<div class="col-sm-4">
+							<div class="input-group">
+								<input class="form-control" name="time_limit" max="500" type="number" placeholder="Nhập thời gian làm bài (phút)" />
+								<span class="input-group-addon">phút</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Đặt lịch làm bài </label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" name="is_enable_schedule" <?= !empty($test['start_time']) ? 'checked="checked"': '' ?>>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group" style="display:none" >
+						<label class="control-label col-sm-3">Thời gian mở đề</label>
+						<div class="col-sm-4">
+							<div class="input-group">
+								<input class="form-control" name="start_time" placeholder="Thời gian mở đề">
+								<span class="input-group-addon">
+			                    	<span class="glyphicon glyphicon-calendar"></span>
+			                    </span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group" style="display:none" >
+						<label class="control-label col-sm-3">Thời gian đóng đề</label>
+						<div class="col-sm-4">
+							<div class="input-group">
+								<input class="form-control" name="end_time" placeholder="Thời gian đóng đề">
+								<span class="input-group-addon">
+			                    	<span class="glyphicon glyphicon-calendar"></span>
+			                    </span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Yêu cầu đăng nhập</label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" name="is_login" checked>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Đặt số lần làm bài </label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" name="is_attemps" checked="checked">
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Số lần làm bài </label>
+						<div class="col-sm-4">
+							<input class="form-control" name="attemps" max="100" value="1" type="number" placeholder="Nhập số lần làm bài">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Cho phép đảo câu </label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" name="shuffle" />
+								</label>
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="control-label col-sm-3">Hiện đáp án sau khi làm bài </label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" name="show_point" />
+								</label>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-9 col-sm-offset-3">
+					<button type="submit" class="btn btn-success" name="submit">Tạo mới</button>
+				</div>
+			</div>
+		</form>
+
+		<script>
+
+			$().ready(function(e){
+
+				$('input[name=is_enable_time]').change(function(e){
+
+					var par = $('input[name=time_limit]').parent().parent().parent();
+					par.toggle();
+
+					if(par.css('display') != 'none')
+					{
+						$('input[name=time_limit]').val(1);
+					}
+				});
+
+				$('input[name=is_attemps]').change(function(e){
+
+					var par = $('input[name=attemps]').parent().parent();
+					par.toggle();
+
+					if(par.css('display') != 'none')
+					{
+						$('input[name=attemps]').val(1);
+					}
+
+				});
+
+				$('input[name=is_enable_schedule]').change(function(e){
+
+					$('input[name=start_time]').parent().parent().parent().toggle();
+					$('input[name=end_time]').parent().parent().parent().toggle();
+
+					if($('input[name=start_time]').parent().parent().parent().css('display') != 'none')
+					{
+
+						$('input[name=start_time]').parent().datetimepicker({
+						});
+
+						$('input[name=end_time]').parent().datetimepicker({
+						});
+
+						$('input[name=start_time]').parent().on("dp.change", function (e) {
+					        $('input[name=end_time]').parent().data("DateTimePicker").minDate(e.date);
+					    });
+					    $('input[name=end_time]').parent().on("dp.change", function (e) {
+					        $('input[name=start_time]').parent().data("DateTimePicker").maxDate(e.date);
+					    });
+
+					}
+					else
+					{
+						$('input[name=start_time]').val('');
+						$('input[name=end_time]').val('');	
+					}
+
+				});
+
+				tinyMCE.init({
+					selector: '#test-description'
+				});
+
+			});
+
+		</script>
+	</div>
+</div>
+
+<?php endif; ?>
+</div>

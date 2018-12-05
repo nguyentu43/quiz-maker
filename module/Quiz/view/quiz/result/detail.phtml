@@ -1,0 +1,438 @@
+<div class="container">
+<?php if(isset($error)): ?>
+
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title">Thông báo</h3>
+	</div>
+	<div class="panel-body">
+		<?= $error ?>
+	</div>
+</div>
+
+<?php 
+	else:
+?>
+
+<?php
+
+	$this->headMeta()
+	->setProperty('og:title', '10Quiz '. 'Chi tiết bài làm - '.$test->test_name)
+	->setProperty('og:url', $this->url('result/detail', [ 'result_id' => $result['result_id'], [ 'force_canonical' => true ] ]));
+
+	if(!empty($test->img))
+	{
+		$img = $this->basePath('img/tests/'.$test->img);
+		$this->headMeta()
+		->setProperty('og:image', $img);
+	}
+
+	echo $this->headMeta();
+	echo $this->headTitle('Chi tiết bài làm - '.$test->test_name);
+
+?>
+
+<?= $this->inlineScript()->setFile($this->basePath('js/jQuery.tagify.min.js'))?>
+<h2 class="text-center" style="margin-bottom: 20px">KẾT QUẢ ĐỀ THI <?= mb_strtoupper($test->test_name, 'utf8')?></h2>
+
+<?php if( $edit || $test['show_point']): ?>
+<div class="panel panel-default panel-border-top">
+	<div class="panel-body">
+		<div class="row text-center">
+			<div class="col-sm-6">
+				<h2>SỐ CÂU ĐÚNG</h2>
+				<h2><?= $result['count']?>/<?= $total_question?> (<?= round(($result['count'] / $total_question)*100);?>%)</h2>
+			</div>
+			<div class="col-sm-6">
+				<h2>ĐIỂM</h2>
+				<h2><?= $result['point']?>/<?= $total_point?> (<?= round(($result['point'] / $total_point)*100);?>%)</h2>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php endif; ?>
+
+<div class="panel panel-default panel-border-top">
+	<div class="panel-body">
+		<ul class="list-group">
+			<li class="list-group-item">Họ và tên người làm bài: <?= $user_result['fullname']?> - Tài khoản: <?= $user_result['username']?></li>
+			<?php
+				$start = date_create($result['time_start']);
+
+				if($result['time_submit'])
+					$submit = date_create($result['time_submit']);
+				else
+					$submit = '-';
+			?>
+			<li class="list-group-item">Thời gian bắt đầu làm: <?= date_format($start, 'd/m/Y H:i:s')?></li>
+			<li class="list-group-item">Thời gian nộp bài: <?= $submit != '-' ? date_format($submit, 'd/m/Y H:i:s') : $submit ?></li>
+			<?php
+				if($submit != '-')
+					$diff = date_diff($start, $submit)->format('%H:%I:%S');
+				else
+					$diff = '-';
+			?>
+			<li class="list-group-item">Thời gian làm bài: <?= $diff ?></li>
+		</ul>
+
+		<?php
+			if($edit)
+				echo '<form method="post">
+						<button class="btn btn-primary btn-sm" type="submit" value="true" name="btnMark">Chấm lại điểm tự động</button>
+					</form>';
+		?>
+
+	</div>
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">Chi tiết bài làm</h3>
+	</div>
+	<div class="panel-body">
+		<?php
+			$i = 1;
+
+			foreach ($questions as $q):
+		?>
+
+		<h4 id="q<?= $q->question_id ?>">Câu <?= $i?> <span class="badge">(<?= $q->question_settings->point ?>đ)</span></h4>
+		<div class="panel panel-question-text">
+			<div class="panel-body">
+				<?= $q->question_text; ?>
+			</div>
+		</div>
+
+		<div style="margin-bottom: 5px">Loại câu: <label class="label label-default">
+			<?php 
+				switch(intval($q->question_type_id))
+				{
+					case 1:
+						echo 'Một lựa chọn';
+						break;
+					case 2:
+						echo 'Nhiều lựa chọn';
+						break;
+					case 3:
+						echo 'Sắp xếp';
+						break;
+					case 4:
+						echo 'Ghép cột';
+						break;
+					case 5:
+						echo 'Phân loại';
+						break;
+					case 6:
+						echo 'Trả lời ngắn';
+						break;
+					case 7:
+						echo 'Đoạn văn';
+						break;
+					case 8:
+						echo 'Điền từ';
+						break;
+					case 9:
+						echo 'File';
+						break;
+				}
+			?>
+		</label></div>
+
+		<?php if($q->question_type_id != 7 && $q->question_type_id != 9 ): ?>
+
+		<?php if($edit || $test['show_point']): ?>
+
+		<h4><label class="label label-primary">Đáp án</label></h4>
+
+		<div class="panel panel-default">
+			<div class="panel-body" style="padding: 0 5px">
+				<table class="table table-option" id="table-option-<?= $q->question_id ?>" style="margin-bottom: 0">
+					<tbody>
+						<?php
+							switch(intval($q->question_type_id))
+							{
+								case 1:
+								case 2:
+									foreach ($q->question_options as $option) {
+
+										if($option->is_correct)
+											echo <<<EOD
+												<tr>
+													<td class="index"><i class='fa fa-check text-success' aria-hidden='true'></i> {$option->index}. </td>
+													<td>$option->option_text</td>
+												</tr>
+EOD;
+										else
+											echo <<<EOD
+												<tr>
+													<td class="index"><span style='padding-left: 20px'> $option->index. </span></td>
+													<td>$option->option_text</td>
+												</tr>
+EOD;
+
+									}
+									break;
+								case 3:
+									foreach ($q->question_options as $option) {
+											echo <<<EOD
+												<tr>
+													<td class="index"><i class="fa fa-sort fa-2x" aria-hidden="true"></i></td>
+													<td>$option->option_text</td>
+												</tr>
+EOD;
+									}
+
+									echo <<<EOD
+									<script>
+										$().ready(function(){
+											$('#table-option-{$q->question_id} tbody').sortable({disabled: true});
+										});
+									</script>
+EOD;
+									break;
+								case 4:
+									foreach ($q->question_options as $option) {
+											echo <<<EOD
+												<tr class="row">
+													<td class="col-sm-5"><div class="source">{$option->source->data}</div></td>
+													<td class="col-sm-1 text-center"><i class="fa fa-long-arrow-right fa-2x"></i></td>
+													<td class="col-sm-5"><div class="target">{$option->target->data}</div></td>
+												</tr>
+EOD;
+									}
+									break;
+								case 5:
+									foreach ($q->question_options as $option) {
+											echo <<<EOD
+												<tr class="row">
+													<td class="col-sm-1"><h3 style="margin:0"><span class="label label-primary">{$option->group_text}</span></h3></td>
+													<td><input class="group_items" value="{$option->group_items}"></td>
+												</tr>
+EOD;
+									}
+
+									echo<<<EOD
+										<script>
+											$().ready(function(){
+												$('#table-option-{$q->question_id} tbody').find('.group_items').tagify({delimiters: ';'});
+												$('#table-option-{$q->question_id} tbody').find('.tagify .tagify__input').attr('contenteditable', 'false');
+												$('#table-option-{$q->question_id} tbody').find('.tagify x').remove();
+											});
+										</script>
+EOD;
+									break;
+								case 6:
+									foreach ($q->question_options as $option) {
+											echo <<<EOD
+												<tr>
+													<td class="option-text">{$option->option_text}</td>
+												</tr>
+EOD;
+
+									}
+									break;
+								case 8:
+									foreach ($q->question_options as $option) {
+											$fill_words = json_encode($option->fill_words);
+											echo <<<EOD
+												<tr>
+													<td class="index"><span style='padding-left: 20px'> {$option->index}. </span></td>
+													<td class="option-text">{$option->option_text}</td>
+												</tr>
+												<script>
+													$().ready(function(){
+
+														var fill_words = $fill_words;			
+
+														$('#table-option-{$q->question_id} tbody').find('tr .option-text').each(function(index, value){
+
+															$(value).find('input').each(function(index_input, input){
+
+																$(input).val(fill_words[index_input]);
+																$(input).prop('disabled', 'disabled');
+
+															});
+
+														});
+
+													});
+												</script>
+EOD;
+
+									}
+									break;
+							}
+
+						?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<?php endif; endif; 
+
+		if($edit || $test['show_point'])
+			if(array_key_exists($q->question_id, $answers) )
+			{
+				if($answers[$q->question_id]->point > 0)
+					echo '<h4><label class="label label-success">Trả lời đúng +'. $answers[$q->question_id]->point .'đ</label></h4>';
+				else if($answers[$q->question_id]->point == 0)
+					echo '<h4><label class="label label-danger">Trả lời sai</label></h4>';
+				else
+					echo '<h4><label class="label label-default">Chưa chấm</label></h4>';
+			}
+
+		?>
+
+		<div class="panel panel-default">
+			<div class="panel-body">
+
+			<?php
+				
+			if(array_key_exists($q->question_id, $answers))
+			{
+				echo 'Đã trả lời: ';
+				global $answer;
+				$answer = $answers[$q->question_id];
+				switch(intval($q->question_type_id))
+				{
+					case 1:
+					case 2:
+						echo implode(', ', array_filter(array_map(function($item){
+
+							global $answer;
+
+							if(in_array($item->id, $answer->data))
+								return $item->index;
+
+						}, $q->question_options)));
+						break;
+					case 3:
+						echo '<ul>';
+						foreach($answer->data as $value)
+						{
+							foreach($q->question_options as $option)
+							{
+								if($option->id === $value)
+									echo "<li>$option->option_text</li>";
+							}
+						}
+						echo '</ul>';
+						break;
+					case 4:
+
+						echo '<table class="table table-option">';
+
+						foreach ($answer->data as $item) {
+
+							$from = '';
+							$to = '';
+
+							foreach($q->question_options as $option)
+							{
+								if($option->source->id == $item->from)
+								{
+									$from = $option->source->data;
+									break;
+								}
+							}
+
+							foreach($q->question_options as $option)
+							{
+								if($option->target->id == $item->to)
+								{
+									$to = $option->target->data;
+									break;
+								}
+							}
+
+							echo <<<EOD
+								<tr class="row">
+									<td class="col-sm-5"><div class="source">{$from}</div></td>
+									<td class="col-sm-1 text-center"><i class="fa fa-long-arrow-right fa-2x"></i></td>
+									<td class="col-sm-5"><div class="target">{$to}</div></td>
+								</tr>
+EOD;
+						}
+
+						echo '</table>';
+
+						break;
+					case 5:
+						foreach($q->question_options as $option)
+						{
+							foreach($answer->data as $item)
+							{
+								if($option->id == $item->id)
+								{
+									echo "<div><label class='label label-default'>$option->group_text</label>: ".implode(';', $item->data)."</div>";
+								}
+							}
+						}
+						break;
+					case 6:
+						echo $answer->data;
+						break;
+					case 7:
+						echo "<textarea id='textarea-$q->question_id'>$answer->data</textarea>";
+						echo "<script>tinyMCE.init({ selector: '#textarea-$q->question_id', readonly: 1, menubar: false, toolbar1: 'fullscreen' });</script>";
+						break;
+					case 8:
+						foreach ($q->question_options as $option) {
+							foreach($answer->data as $item)
+							{
+								if($item->id == $option->id)
+								{
+									echo "<div>$option->index. ". implode('; ',$item->data) ."</div>";
+								}
+							}
+						}
+						break;
+					case 9:
+						foreach($answer->data as $index => $item)
+						{
+							echo "<div>".($index + 1).". <a class='btn btn-success btn-sm' href='".$this->url('result/download', [], [ 'query' => [ 'result_id' => $item->result_id, 'name' => $item->file->name ] ])."' target='_blank'>{$item->file->name}</a></div>";
+						}
+						break;
+				}
+			}
+			else
+			{
+				echo 'Chưa trả lời câu hỏi';
+			}
+
+			?>
+			</div>
+		</div>
+
+		<?php if($edit || $test['show_point']): ?>
+
+		<div class="panel panel-success" <?= strlen(trim(strip_tags($q->question_settings->feedback))) == 0 ? 'style="display:none"' : ''?>>
+			<div class="panel-heading">Giải thích</div>
+			<div class="panel-body"><?= $q->question_settings->feedback ?></div>
+		</div>
+
+		<?php
+				if(array_key_exists($q->question_id, $answers) && $edit):
+		?>
+
+		<form method="post" class="form-inline">
+			<input type="hidden" name="question_id" value="<?= $q->question_id ?>" />
+			<div class="form-group">
+				<label>Điểm</label>
+				<input class="form-control" type="number" step="0.1" name="point" min='-1' max='<?= $q->question_settings->point ?>' value="<?= $answers[$q->question_id]->point == -1 ? 0  : $answers[$q->question_id]->point ?>" />
+			</div>
+			<button class="btn btn-primary btn-sm" type="submit">Chấm điểm</button>
+		</form>
+
+		<?php
+				endif; endif;
+
+			echo '<hr style="border-color: black"/>';
+
+		$i++; endforeach; ?>
+	</div>
+</div>
+<?php endif;?>
+</div>

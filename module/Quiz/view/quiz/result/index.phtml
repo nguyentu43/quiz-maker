@@ -1,0 +1,158 @@
+<div class="container">
+<?php if(isset($error)): ?>
+
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title">Thông báo</h3>
+	</div>
+	<div class="panel-body">
+		<?= $error ?>
+	</div>
+</div>
+
+<?php else: ?>
+
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/datatables.min.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/dataTables.bootstrap.min.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/RowGroup-1.0.2/js/dataTables.rowGroup.min.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/Buttons-1.4.2/js/buttons.bootstrap.min.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('DataTables/pdfmake-0.1.32/vfs_fonts.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('js/google-chart-loader.js'))?>
+<?= $this->inlineScript()->setFile($this->basePath('js/jquery.sparkline.min.js'))?>
+
+<?php
+
+	$this->headMeta()
+	->setProperty('og:title', '10Quiz '. 'Kết quả - '.$test['test_name'])
+	->setProperty('og:url', $this->url('result/list', [ 'test_id' => $test['test_id'], [ 'force_canonical' => true ] ]));
+
+	if(!empty($test['img']))
+	{
+		$img = $this->basePath('img/tests/'.$test['img']);
+		$this->headMeta()
+		->setProperty('og:image', $img);
+	}
+
+	echo $this->headMeta();
+
+	echo $this->headTitle('Kết quả - '.$test['test_name']);
+
+?>
+
+<div class="panel panel-default panel-border-top">
+	<div class="panel-body">
+		<h3 class="text-center title">KẾT QUẢ ĐỀ THI <?= mb_strtoupper($test['test_name'], 'utf8')?></h3>
+
+		<div class="modal fade" id="modalDelete">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Xoá câu hỏi</h4>
+					</div>
+					<div class="modal-body">
+						Bạn có muốn xoá kết quả này?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+						<button type="button" class="btn btn-danger btnConfirm">Đồng ý</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-hover table-bordered table-condensed v-align-middle" id="table-result">
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Họ và tên</th>
+						<th>IP Address</th>
+						<th>Tỉ lệ</th>
+						<th>Số câu đúng</th>
+						<th>Điểm</th>
+						<th>Thông tin thêm</th>
+						<th>Ngày làm bài</th>
+						<th>Thời gian làm bài</th>
+						<th>Thao tác</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+
+						$i = 1;
+
+						foreach ($result as $row) {
+
+							$start = date_create($row['time_start']);
+
+							if($row['time_submit'])
+							{
+								$submit = date_create($row['time_submit']);
+								$diff = date_diff($start, $submit)->format('%H:%I:%S');
+							}
+							else
+							{
+								$submit = '-';
+								$diff = '-';
+							}
+
+							$url = $this->url('result/detail', ['result_id' => $row['result_id']]);
+
+							if($row['point'] < 0)
+								$row['point'] = 0;
+
+							$date_start = date_format($start, 'd/m/Y H:i:s');
+							$per1 = number_format(($row['count'] / $row['total_question'])*100);
+							$per2 = number_format(($row['point'] / $row['total_point'])*100);
+							$tr = <<< EOD
+
+							<tr>
+								<td>$i</td>
+								<td>{$row['fullname']}</td>
+								<td>{$row['ip_address']}</td>
+								<td>$per1%</td>
+								<td>{$row['count']}/{$row['total_question']}</td>
+								<td>{$row['point']}/{$row['total_point']} ($per2%)</td>
+								<td>{$row['information']}</td>
+								<td>$date_start</td>
+								<td>$diff</td>
+								<td data-result-id="{$row['result_id']}">
+									<a class="btn btn-default" target="_blank" href='$url'><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a>
+									<button type="button" class="btn btn-danger btnDeleteItem">Xoá</button>
+								</td>
+							</tr>
+
+EOD;
+							echo $tr;
+
+							$i++;
+						}
+					?>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th colspan="3" class="text-right"></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+
+		<?php if(count($result) > 0): ?>
+
+		<div class="panel panel-default panel-border-top" style="margin-top: 50px">
+			<div class="panel-body">
+				<div id="chartColumn"></div>
+			</div>
+		</div>
+
+		<?php endif; ?>
+		<script>
+			var urlDelete = "<?= $this->url('result/delete')?>";
+		</script>
+		<?= $this->inlineScript()->setFile($this->basePath('js/app/result.js'))?>
+	</div>
+</div>
+
+<?php endif;?>
+</div>

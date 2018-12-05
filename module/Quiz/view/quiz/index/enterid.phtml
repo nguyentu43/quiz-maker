@@ -1,0 +1,37 @@
+<?php
+	echo $this->headMeta()
+	->appendProperty('og:title', '10Quiz Nhập mã đề thi');
+
+    echo  $this->headTitle('Nhập mã đề thi');
+?>
+
+<div class="container">
+	<div class="col-sm-6 col-sm-offset-3" style="top: 120px; position: relative">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Tìm đề thi</h3>
+			</div>
+			<div class="panel-body">
+				<form method="POST" role="form">
+					<?php
+						if(isset($error))
+						{
+							$alert = <<< EOD
+								<div class="alert alert-danger">
+									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+									<strong>Thông báo!</strong> $error
+								</div>
+EOD;
+							echo $alert;
+						}
+					?>
+					<div class="form-group">
+						<input type="text" name="test_code" class="form-control" required="required" placeholder="Nhập mã đề thi">
+					</div>
+					<button type="submit" class="btn btn-success btn-block" name="btnTestId">Nhập mã đề</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+</div>
