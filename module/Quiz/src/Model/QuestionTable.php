@@ -116,7 +116,7 @@ class QuestionTable
 
 	public function getStatistical($question_id)
 	{
-		$sql = "SELECT count(*) as count FROM answer WHERE question_id = ? and response->'$.point' > 0";
+		$sql = "SELECT count(*) as count FROM answer WHERE question_id = ? and json_extract(response, '$.point') > 0";
 		$count = $this->table->adapter->createStatement($sql)->execute([$question_id])->current()['count'];
 
 		$sql = "SELECT count(*) as count FROM answer WHERE question_id = ?";
