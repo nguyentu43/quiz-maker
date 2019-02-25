@@ -47,13 +47,13 @@ class TestResultTable
 
 	public function getByUser($user_id)
 	{
-		$sql = "select result.result_id, count(distinct answer.question_id) as question_count, test_name, count, time_start, time_submit, sum(response->'$.point') as point, count(question_settings->'$.point') as total_point from result join test on result.test_id = test.test_id join answer on answer.result_id = result.result_id join question on question.question_id = answer.question_id where result.user_id = ? group by result.result_id";
+		$sql = "select result.result_id, count(distinct answer.question_id) as question_count, test_name, count, time_start, time_submit, sum(json_extract(response, '$.point')) as point, count(json_extract(question_settings, '$.point')) as total_point from result join test on result.test_id = test.test_id join answer on answer.result_id = result.result_id join question on question.question_id = answer.question_id where result.user_id = ? group by result.result_id";
 		return $this->table->adapter->createStatement($sql)->execute([$user_id]);
 	}
 
 	public function getByTest($test_id)
 	{
-		$sql = "select result.result_id, count(distinct answer.question_id) as total_question, information, fullname, ip_address, count, time_start, time_submit, sum(response->'$.point') as point, count(question_settings->'$.point') as total_point from result join answer on answer.result_id = result.result_id join question on question.question_id = answer.question_id where test_id = ? group by result.result_id";
+		$sql = "select result.result_id, count(distinct answer.question_id) as total_question, information, fullname, ip_address, count, time_start, time_submit, sum(json_extract(response, '$.point')) as point, count(json_extract(question_settings, '$.point')) as total_point from result join answer on answer.result_id = result.result_id join question on question.question_id = answer.question_id where test_id = ? group by result.result_id";
 		return $this->table->adapter->createStatement($sql)->execute([$test_id]);
 	}
 
@@ -71,7 +71,7 @@ class TestResultTable
 
 	public function getAnswerRight($test_id, $question_id)
 	{
-		$sql = "select count(*) as count from result join answer on result.result_id = answer.result_id and test_id = ? and question_id = ? where response->'$.point' > 0";
+		$sql = "select count(*) as count from result join answer on result.result_id = answer.result_id and test_id = ? and question_id = ? where json_extract(response, '$.point') > 0";
 		$right = $this->table->adapter->createStatement($sql)->execute([$test_id, $question_id])->current()['count'];
 
 		$sql = "select count(*) as count from result join answer on result.result_id = answer.result_id and test_id = ? and question_id = ?";
@@ -118,7 +118,7 @@ class TestResultTable
 
 	public function updateCount($result_id)
 	{
-		$sql = "update result set count = (select count(*) from answer where response -> '$.point' > 0 and result_id = ?) where result_id = ?";
+		$sql = "update result set count = (select count(*) from answer where json_extract(response, '$.point') > 0 and result_id = ?) where result_id = ?";
 		$this->table->adapter->createStatement($sql)->execute([$result_id, $result_id]);
 	}
 
