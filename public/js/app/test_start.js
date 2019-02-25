@@ -384,17 +384,62 @@ $().ready(function(e){
 
 		$('#btnSubmit').click(function(){
 
-			$('#modalCheck').modal('show');
+			function handleSubmit()
+			{
+				$('#modalCheck').modal('show');
 
-			if($('.pagination-scroll .active').length == listQuestion.length)
-				$('#modalCheck #message_not_done').hide();
+				if($('.pagination-scroll .active').length == listQuestion.length)
+					$('#modalCheck #message_not_done').hide();
+				else
+					$('#modalCheck #message_not_done').show();
+
+				$('#modalCheck .btnConfirm').off('click');
+				$('#modalCheck .btnConfirm').on('click', function(){
+					submit();
+				});
+			}
+
+			var question = listQuestion[listQuestion.length - 1];
+			getResponse(question);
+			
+			var response = listResponse[question.question_id];
+
+			if(typeof response === 'undefined')
+				response = null;
+
+			if(typeof preview === 'undefined')
+			{
+				var notify_submit_answer = $.notify({message: 'Đang nộp đáp án', icon: 'fa fa-spinner'}, {type: 'info'});
+
+				$.ajax({
+				url: urlTest + "/submit",
+				data: JSON.stringify({
+					test_id: $('input[name=test_id]').val(), 
+					question_id: question.question_id, 
+					result_id: result_id,
+					response: response
+				}),
+				dataType: 'json',
+				method: 'post',
+				success: function(result){
+						if(result.ok == 1)
+						{
+
+							notify_submit_answer.close();
+							handleSubmit();
+							
+						}
+						else
+						{
+							$.notify({message: 'Lỗi nộp đáp án', icon: 'fa fa-exclamation-circle'}, {type: 'danger'});
+						}
+					}
+				});
+			}
 			else
-				$('#modalCheck #message_not_done').show();
-
-			$('#modalCheck .btnConfirm').off('click');
-			$('#modalCheck .btnConfirm').on('click', function(){
-				submit();
-			});
+			{
+				handleSubmit();
+			}
 		});
 
 		var li = '';
