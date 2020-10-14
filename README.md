@@ -1,4 +1,5 @@
 # Online Quiz
-Zend Framework
 
-[Demo](https://nt10quiz.000webhostapp.com)
+How to run
+- Install packages: composer install
+- Add config to file /config/autoload/global.php
