@@ -1,0 +1,37 @@
+version: "3.8"
+
+services: 
+
+    db:
+        build: ./db
+        environment: 
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=quiz
+
+    # phpmyadmin:
+    #     image: phpmyadmin:5.0.2-apache
+    #     environment: 
+    #         - DB_HOST=db
+    #     restart: always
+    #     ports: 
+    #         - 8080:80
+    #     depends_on: 
+    #         - db
+
+    quiz:
+        build: .
+        environment: 
+            - DB_NAME=quiz
+            - DB_HOST=db
+            - DB_USER=root
+            - DB_PASS=root
+            - WEB_NAME=10Quiz
+            - MAIL_HOST=smtp.gmai.com
+            - MAIL_ADDRESS=example@gmail.com
+            - MAIL_USER=api
+            - MAIL_PASS=api
+            - MAIL_PORT=587
+        ports: 
+            - "80:80"
+        depends_on: 
+            - db

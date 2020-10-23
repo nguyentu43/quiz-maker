@@ -1,5 +1,5 @@
 {
-    "name": "Quiz",
+    "name": "nt/quiz",
     "description": "Make quiz online",
     "type": "project",
     "keywords": [
@@ -53,7 +53,7 @@
         "post-create-project-cmd": [
             "@development-enable"
         ],
-        "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
+        "serve": "php -S 0.0.0.0:80 -t public/ public/index.php",
         "test": "phpunit"
     }
 }

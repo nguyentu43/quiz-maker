@@ -16,9 +16,9 @@ use Zend\Session\Storage\SessionArrayStorage;
 return [
     'db' => [
         'driver' => 'Pdo',
-        'dsn' => 'mysql:dbname=quiz;host=localhost;charset=utf8',
-        'username' => 'homestead',
-        'password' => 'secret'
+        'dsn' => "mysql:dbname=".getenv('DB_NAME').";host=".getenv('DB_HOST').";charset=utf8",
+        'username' => getenv('DB_USER'),
+        'password' => getenv('DB_PASS')
     ],
     'session_config' => [
         'cookie_lifetime' => 60*60*24,
@@ -28,14 +28,14 @@ return [
         'type' => SessionArrayStorage::class
     ],
     'app' => [
-        'name' => '10Quiz',
-        'email' => 'example@gmail.com',
-        'root_path' => '/home/vagrant/quiz/'
+        'name' => getenv('WEB_NAME'),
+        'email' => getenv('MAIL_ADDRESS'),
+        'root_path' => '/var/www/html/'
     ],
     'mail' => [
-        'server' => 'smtp.gmail.com',
-        'port' => 587,
-        'username' => 'example@gmail.com',
-        'password' => '12345678'
+        'server' => getenv('MAIL_HOST'),
+        'port' => getenv('MAIL_PORT'),
+        'username' => getenv('MAIL_USER'),
+        'password' => getenv('MAIL_PASS')
     ]
 ];
