@@ -1,5 +1,5 @@
 # Online Quiz
 
 How to run
-- Install packages: composer install
-- Add config to file /config/autoload/global.php
+- Edit file /config/autoload/global.php
+- Install Docker and run docker-compose
