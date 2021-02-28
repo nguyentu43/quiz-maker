@@ -485,7 +485,7 @@ class TestController extends AbstractActionController
 			$result_id = $this->resultTable->insert([
 				'test_id' => $test_id,
 				'user_id' => $user_id,
-				'time_start' => date('Y-m-d h:i:s'),
+				'time_start' => date('Y-m-d H:i:s'),
 				'count' => 0,
 				'fullname' => $fullname,
 				'information' => $information,

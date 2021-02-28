@@ -238,14 +238,14 @@ EOD;
 											echo <<<EOD
 												<tr>
 													<td class="index"><span style='padding-left: 20px'> {$option->index}. </span></td>
-													<td class="option-text">{$option->option_text}</td>
+													<td class="option-text-{$option->index}">{$option->option_text}</td>
 												</tr>
 												<script>
 													$().ready(function(){
 
 														var fill_words = $fill_words;			
 
-														$('#table-option-{$q->question_id} tbody').find('tr .option-text').each(function(index, value){
+														$('#table-option-{$q->question_id} tbody').find('tr .option-text-{$option->index}').each(function(index, value){
 
 															$(value).find('input').each(function(index_input, input){
 
