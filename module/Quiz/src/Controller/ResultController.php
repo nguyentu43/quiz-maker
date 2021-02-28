@@ -192,7 +192,6 @@ class ResultController extends AbstractActionController
 
 	public function uploadAction()
 	{
-
 		$request = $this->getRequest();
 		$data = array_merge_recursive($request->getPost()->toArray(), $request->getFiles()->toArray());
 		$result_id = $data['result_id'];
