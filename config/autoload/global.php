@@ -30,7 +30,7 @@ return [
     'app' => [
         'name' => getenv('WEB_NAME'),
         'email' => getenv('MAIL_ADDRESS'),
-        'root_path' => '/var/www/html/'
+        'root_path' => '/var/www/html/' //$config['app']['root_path'].'public/img/tests/';
     ],
     'mail' => [
         'server' => getenv('MAIL_HOST'),
