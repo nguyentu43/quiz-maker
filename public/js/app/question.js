@@ -20,8 +20,8 @@ $().ready(function(){
 
 	tinyMCE.defaultSettings.plugins += ' responsivefilemanager';
 	tinyMCE.defaultSettings.toolbar1 += ' responsivefilemanager';
-	tinyMCE.defaultSettings.external_filemanager_path = "/filemanager/";
 	tinyMCE.defaultSettings.filemanager_title = "Responsive Filemanager";
+	tinyMCE.defaultSettings.external_filemanager_path = "/filemanager/";
 	tinyMCE.defaultSettings.external_plugins = { "filemanager" : "/filemanager/plugin.min.js"};
 
 	function Question(data)

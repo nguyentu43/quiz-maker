@@ -3,7 +3,7 @@ $version = "9.13.4";
 #if (session_id() == '') session_start();
 
 #add
-require_once '/home/vagrant/quiz/vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 session_start();
 
 mb_internal_encoding('UTF-8');
