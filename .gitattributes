@@ -1,4 +1,4 @@
-public/js linguist-vendored
+public/js/* linguist-vendored
 public/js/app/* linguist-vendored=false
-public/DataTables linguist-vendored
-public/filemanager linguist-vendored
+public/DataTables/* linguist-vendored
+public/filemanager/* linguist-vendored

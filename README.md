@@ -1,8 +1,7 @@
 # Online Quiz
 
 How to run
-- Edit file /config/autoload/global.php
-- Install docker and run docker-compose
+- Install docker and run docker-compose up
 
 #### Home
 ![OV](https://github.com/nguyentu43/quiz/raw/master/screenshot01.png)

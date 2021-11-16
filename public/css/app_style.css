@@ -38,6 +38,12 @@ body{
 	border-color: #00796B;
 }
 
+@media (max-width: 767px){
+	.navbar-default .navbar-nav .open .dropdown-menu>li>a {
+		color: white;
+	}
+}
+
 .categories{
 	margin-bottom: 10px;
 }
