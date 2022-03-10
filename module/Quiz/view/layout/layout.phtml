@@ -1,190 +1,379 @@
-<?= $this->doctype() ?>
+<?= $this->doctype() ?> 
 
-<?php
+ 
 
-    $child = $this->viewModel()->getCurrent()->getChildren();
-    $viewModel = $child[0];
-    if(isset($viewModel->user)){
-        $user = $viewModel->user;
-    }
+<?php 
 
-    $app_config = $this->app_config;
+ 
 
-?>
+    $child = $this->viewModel()->getCurrent()->getChildren(); 
 
-<html>
-    <head>
-        <meta charset="utf-8">
-        <?= $this->headTitle($app_config['name'])->setSeparator(' | ')->setAutoEscape(false) ?>
+    $viewModel = $child[0]; 
 
-        <?= $this->headMeta()
-            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
-            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
-            ->appendName('description', '10Quiz tạo và chia sẻ đề trắc nghiệm trực tuyến, ôn tập kiến thức')
-            ->appendName('keywords', '10Quiz, quiz online, trắc nghiệm trực tuyến')
-            ->appendProperty('og:url', $this->url('home', [], ['force_canonical' => true]))
-            ->appendProperty('og:type', 'website')
-            ->appendProperty('og:title', '10Quiz Trắc nghiệm trực tuyến, ôn tập')
-            ->appendProperty('og:description', '10Quiz tạo và chia sẻ đề trắc nghiệm trực tuyến, ôn tập kiến thức')
-            ->appendProperty('og:image', $this->basePath('img/10quiz.png'));
-        ?>
+    if(isset($viewModel->user)){ 
 
-        <!-- Le styles -->
-        <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
-            ->prependStylesheet($this->basePath('css/app_style.css'))
-            ->prependStylesheet($this->basePath('css/slick-theme.css'))
-            ->prependStylesheet($this->basePath('css/slick.css'))
-            ->prependStylesheet($this->basePath('css/jquery-ui.min.css'))
-            ->prependStylesheet($this->basePath('DataTables/Buttons-1.4.2/css/buttons.bootstrap.min.css'))
-            ->prependStylesheet($this->basePath('DataTables/dataTables.bootstrap.min.css'))
-            ->prependStylesheet($this->basePath('DataTables/RowGroup-1.0.2/css/rowGroup.bootstrap.min.css'))
-            ->prependStylesheet($this->basePath('css/multi-select.css'))
-            ->prependStylesheet($this->basePath('css/tagify.css'))
-            ->prependStylesheet($this->basePath('css/uploadfile.css'))
-            ->prependStylesheet($this->basePath('css/bootstrap-datetimepicker.css'))
-            ->prependStylesheet($this->basePath('css/fieldsLinker.css'))
-            ->prependStylesheet($this->basePath('css/font-awesome.min.css'))
-            ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
-        ?>
+        $user = $viewModel->user; 
 
-        <!-- Scripts -->
-        <?= $this->headScript()
-            ->prependFile($this->basePath('js/bootstrap-datetimepicker.js'))
-            ->prependFile($this->basePath('js/slick.min.js'))
-            ->prependFile($this->basePath('js/bootstrap-notify.min.js'))
-            ->prependFile($this->basePath('js/moment-with-locales.js'))
-            ->prependFile($this->basePath('js/bootstrap.min.js'))
-            ->prependFile($this->basePath('js/fieldsLinker.js'))
-            ->prependFile($this->basePath('js/jquery.uploadfile.min.js'))
-            ->prependFile($this->basePath('js/jquery.ui.touch-punch.min.js'))
-            ->prependFile($this->basePath('js/jquery-ui.js'))
-            ->prependFile($this->basePath('js/tinymce/tinymce.min.js'))
-            ->prependFile($this->basePath('js/jquery.js'))
-        ?>
+    } 
 
-        <script src="<?= $this->basePath('js/tinymce/plugins/tiny_mce_wiris/integration/WIRISplugins.js').'?viewer=image'?>"></script>
-        
-    </head>
-    <body>
-        
-        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="<?= $this->url('home')?>"><?= $app_config['name'] ?></a>
-                </div>
-        
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse navbar-ex1-collapse">
-                    <?php if($this->url() == $this->url('home') || $this->url() == $this->url('test/public')): ?>
-                    <form class="navbar-form navbar-left" role="search" action="<?= $this->url('test/public')?>">
-                        <div class="form-group">
-                            <input type="text" name="keywords" class="form-control" placeholder="Nhập tên đề thi" size="30" value="<?= isset($viewModel->query) ? $viewModel->query['keywords'] : ''?>">
-                        </div>
-                        <div class="form-group">
-                            <select name="category_test_id" class="form-control" style="width:150px">
-                                <?php
-                                    if($viewModel->query['category_test_id'] == '')
-                                            echo "<option value='' selected>Tất cả</option>";
-                                        else
-                                            echo "<option value=''>Tất cả</option>";
+ 
 
-                                    if(!empty($viewModel->categories_test))
-                                    {
-                                        foreach ($viewModel->categories_test as $c) {
-                                            if($viewModel->query['category_test_id'] == $c['id'])
-                                                echo "<option value='{$c['id']}' selected>{$c['name']}</option>";
-                                            else
-                                                echo "<option value='{$c['id']}'>{$c['name']}</option>";
-                                        }
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>
-                    </form>
-                    <?php endif;?>
-                    <ul class="nav navbar-nav navbar-right">
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars" aria-hidden="true"></i></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="<?= $this->url('st/enterid')?>"><i class="fa fa-pencil" aria-hidden="true"></i> Nhập mã đề</a></li>
-                                    <?php
-                                        if(isset($user)):
-                                                if($user->role_id == 1 || $user->role_id == 3):
-                                                    if($user->role_id == 3):
-                                    ?>
-                                    <li><a href="<?= $this->url('user_manager')?>"><i class="fa fa-address-book-o" aria-hidden="true"></i> Quản lý tài khoản</a></li>
-                                    <li><a href="<?= $this->url('category') ?>"><i class="fa fa-list" aria-hidden="true"></i> Quản lý danh mục chính</a></li>
-                                                    <?php endif; ?>
-                                    
-                                        <li><a href="<?= $this->url('test')?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Quản lý đề thi</a></li>
-                                        <li><a href="<?= $this->url('question', ['action' => 'category'])?>"><i class="fa fa-tag" aria-hidden="true"></i> Quản lý danh mục câu hỏi</a></li>
-                                        <li><a href="<?= $this->url('question')?>"><i class="fa fa-question-circle-o" aria-hidden="true"></i> Quản lý câu hỏi</a></li>
-                                        
-                                    <?php else: ?>
-                                        <li><a href="<?= $this->url('st/result')?>"><i class="fa fa-list" aria-hidden="true"></i> Kết quả</a></li>
-                                    <?php endif; endif; ?>
-                                </ul>
-                            </li>
-                        <?php if(!empty($user)): ?>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-user-circle-o" aria-hidden="true"></i> 
-                                    <?= $user->fullname ?>
-                                    <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="<?= $this->url('edit_info')?>"><i class="fa fa-address-card-o" aria-hidden="true"></i> Thông tin tài khoản</a></li>
-                                    <li><a href="<?= $this->url('logout')?>"><i class="fa fa-sign-out" aria-hidden="true"></i> Đăng xuất</a></li>
-                                </ul>
-                            </li>
-                        <?php else: ?>
-                            <li><a href="<?= $this->url('login')?>"><i class="fa fa-key" aria-hidden="true"></i></a></li>
-                            <li><a href="<?= $this->url('register')?>"><i class="fa fa-user-plus" aria-hidden="true"></i></a></li>
-                        <?php endif; ?>
-                    </ul>
-                </div><!-- /.navbar-collapse -->
-            </div>
-        </nav>
+    $app_config = $this->app_config; 
 
-        <script>
-            $().ready(function(e){
+ 
 
-                $.notifyDefaults({
-                    offset: 10,
-                    placement: { align: 'center' },
-                    z_index: 2000,
-                    delay: 1000
-                });
+?> 
 
-                tinyMCE.defaultSettings = {
-                    remove_script_host: false,
-                    relative_urls : false,
-                    forced_root_block: 'div',
-                    language: 'vi_VN',
-                    plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount spellchecker imagetools contextmenu colorpicker tiny_mce_wiris textpattern help',
-                    toolbar1: 'formatselect | bold italic strikethrough forecolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat | fullscreen | image | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry',
-                    image_advtab: true
-                };
+ 
 
-            });
-        </script>
+<html> 
 
-        <div class="content" style="margin-top: 70px">
-        <?= $this->content ?>
-        </div>
+    <head> 
 
-        <footer class="text-center">
-          <h3><?= $app_config['name'] ?></h3>
-          <h4><?= $app_config['email'] ?></h4>
-        </footer>
+        <meta charset="utf-8"> 
 
-    </body>
-</html>
+        <?= $this->headTitle($app_config['name'])->setSeparator(' | ')->setAutoEscape(false) ?> 
+
+ 
+
+        <?= $this->headMeta() 
+
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0') 
+
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge') 
+
+            ->appendName('description', '10Quiz tạo và chia sẻ đề trắc nghiệm trực tuyến, ôn tập kiến thức') 
+
+            ->appendName('keywords', '10Quiz, quiz online, trắc nghiệm trực tuyến') 
+
+            ->appendProperty('og:url', $this->url('home', [], ['force_canonical' => true])) 
+
+            ->appendProperty('og:type', 'website') 
+
+            ->appendProperty('og:title', '10Quiz Trắc nghiệm trực tuyến, ôn tập') 
+
+            ->appendProperty('og:description', '10Quiz tạo và chia sẻ đề trắc nghiệm trực tuyến, ôn tập kiến thức') 
+
+            ->appendProperty('og:image', $this->basePath('img/10quiz.png')); 
+
+        ?> 
+
+ 
+
+        <!-- Le styles --> 
+
+        <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico']) 
+
+            ->prependStylesheet($this->basePath('css/app_style.css')) 
+
+            ->prependStylesheet($this->basePath('css/slick-theme.css')) 
+
+            ->prependStylesheet($this->basePath('css/slick.css')) 
+
+            ->prependStylesheet($this->basePath('css/jquery-ui.min.css')) 
+
+            ->prependStylesheet($this->basePath('DataTables/Buttons-1.4.2/css/buttons.bootstrap.min.css')) 
+
+            ->prependStylesheet($this->basePath('DataTables/dataTables.bootstrap.min.css')) 
+
+            ->prependStylesheet($this->basePath('DataTables/RowGroup-1.0.2/css/rowGroup.bootstrap.min.css')) 
+
+            ->prependStylesheet($this->basePath('css/multi-select.css')) 
+
+            ->prependStylesheet($this->basePath('css/tagify.css')) 
+
+            ->prependStylesheet($this->basePath('css/uploadfile.css')) 
+
+            ->prependStylesheet($this->basePath('css/bootstrap-datetimepicker.css')) 
+
+            ->prependStylesheet($this->basePath('css/fieldsLinker.css')) 
+
+            ->prependStylesheet($this->basePath('css/font-awesome.min.css')) 
+
+            ->prependStylesheet($this->basePath('css/bootstrap.min.css')) 
+
+        ?> 
+
+ 
+
+        <!-- Scripts --> 
+
+        <?= $this->headScript() 
+
+            ->prependFile($this->basePath('js/bootstrap-datetimepicker.js')) 
+
+            ->prependFile($this->basePath('js/slick.min.js')) 
+
+            ->prependFile($this->basePath('js/bootstrap-notify.min.js')) 
+
+            ->prependFile($this->basePath('js/moment-with-locales.js')) 
+
+            ->prependFile($this->basePath('js/bootstrap.min.js')) 
+
+            ->prependFile($this->basePath('js/fieldsLinker.js')) 
+
+            ->prependFile($this->basePath('js/jquery.uploadfile.min.js')) 
+
+            ->prependFile($this->basePath('js/jquery.ui.touch-punch.min.js')) 
+
+            ->prependFile($this->basePath('js/jquery-ui.js')) 
+
+            ->prependFile($this->basePath('js/tinymce/tinymce.min.js')) 
+
+            ->prependFile($this->basePath('js/jquery.js')) 
+
+        ?> 
+
+ 
+
+        <script src="<?= $this->basePath('js/tinymce/plugins/tiny_mce_wiris/integration/WIRISplugins.js').'?viewer=image'?>"></script> 
+
+         
+
+    </head> 
+
+    <body> 
+
+         
+
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation"> 
+
+            <div class="container-fluid"> 
+
+                <!-- Brand and toggle get grouped for better mobile display --> 
+
+                <div class="navbar-header"> 
+
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"> 
+
+                        <span class="sr-only">Toggle navigation</span> 
+
+                        <span class="icon-bar"></span> 
+
+                        <span class="icon-bar"></span> 
+
+                        <span class="icon-bar"></span> 
+
+                    </button> 
+
+                    <a class="navbar-brand" href="<?= $this->url('home')?>"><?= $app_config['name'] ?></a> 
+
+                </div> 
+
+         
+
+                <!-- Collect the nav links, forms, and other content for toggling --> 
+
+                <div class="collapse navbar-collapse navbar-ex1-collapse"> 
+
+                    <?php if($this->url() == $this->url('home') || $this->url() == $this->url('test/public')): ?> 
+
+                    <form class="navbar-form navbar-left" role="search" action="<?= $this->url('test/public')?>"> 
+
+                        <div class="form-group"> 
+
+                            <input type="text" name="keywords" class="form-control" placeholder="Nhập tên đề thi" size="30" value="<?= isset($viewModel->query) ? $viewModel->query['keywords'] : ''?>"> 
+
+                        </div> 
+
+                        <div class="form-group"> 
+
+                            <select name="category_test_id" class="form-control" style="width:150px"> 
+
+                                <?php 
+
+                                    if($viewModel->query['category_test_id'] == '') 
+
+                                            echo "<option value='' selected>Tất cả</option>"; 
+
+                                        else 
+
+                                            echo "<option value=''>Tất cả</option>"; 
+
+ 
+
+                                    if(!empty($viewModel->categories_test)) 
+
+                                    { 
+
+                                        foreach ($viewModel->categories_test as $c) { 
+
+                                            if($viewModel->query['category_test_id'] == $c['id']) 
+
+                                                echo "<option value='{$c['id']}' selected>{$c['name']}</option>"; 
+
+                                            else 
+
+                                                echo "<option value='{$c['id']}'>{$c['name']}</option>"; 
+
+                                        } 
+
+                                    } 
+
+                                ?> 
+
+                            </select> 
+
+                        </div> 
+
+                        <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button> 
+
+                    </form> 
+
+                    <?php endif;?> 
+
+                    <ul class="nav navbar-nav navbar-right"> 
+
+                            <li class="dropdown"> 
+
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars" aria-hidden="true"></i></a> 
+
+                                <ul class="dropdown-menu"> 
+
+                                    <li><a href="<?= $this->url('st/enterid')?>"><i class="fa fa-pencil" aria-hidden="true"></i> Nhập mã đề</a></li> 
+
+                                    <?php 
+
+                                        if(isset($user)): 
+
+                                                if($user->role_id == 1 || $user->role_id == 3): 
+
+                                                    if($user->role_id == 3): 
+
+                                    ?> 
+
+                                    <li><a href="<?= $this->url('user_manager')?>"><i class="fa fa-address-book-o" aria-hidden="true"></i> Quản lý tài khoản</a></li> 
+
+                                    <li><a href="<?= $this->url('category') ?>"><i class="fa fa-list" aria-hidden="true"></i> Quản lý danh mục chính</a></li> 
+
+                                                    <?php endif; ?> 
+
+                                     
+
+                                        <li><a href="<?= $this->url('test')?>"><i class="fa fa-list-alt" aria-hidden="true"></i> Quản lý đề thi</a></li> 
+
+                                        <li><a href="<?= $this->url('question', ['action' => 'category'])?>"><i class="fa fa-tag" aria-hidden="true"></i> Quản lý danh mục câu hỏi</a></li> 
+
+                                        <li><a href="<?= $this->url('question')?>"><i class="fa fa-question-circle-o" aria-hidden="true"></i> Quản lý câu hỏi</a></li> 
+
+                                         
+
+                                    <?php else: ?> 
+
+                                        <li><a href="<?= $this->url('st/result')?>"><i class="fa fa-list" aria-hidden="true"></i> Kết quả</a></li> 
+
+                                    <?php endif; endif; ?> 
+
+                                </ul> 
+
+                            </li> 
+
+                        <?php if(!empty($user)): ?> 
+
+                            <li class="dropdown"> 
+
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
+
+                                    <i class="fa fa-user-circle-o" aria-hidden="true"></i>  
+
+                                    <b class="caret"></b> 
+
+                                </a> 
+
+                                <ul class="dropdown-menu"> 
+
+                                    <li><a href="#">Xin chào                              <?= $user->fullname ?></a></li> 
+
+                                    <li><a href="<?= $this->url('edit_info')?>"><i class="fa fa-address-card-o" aria-hidden="true"></i> Thông tin tài khoản</a></li> 
+
+                                    <li><a href="<?= $this->url('logout')?>"><i class="fa fa-sign-out" aria-hidden="true"></i> Đăng xuất</a></li> 
+
+                                </ul> 
+
+                            </li> 
+
+                        <?php else: ?> 
+
+                            <li><a href="<?= $this->url('login')?>"><i class="fa fa-key" aria-hidden="true"></i></a></li> 
+
+                            <li><a href="<?= $this->url('register')?>"><i class="fa fa-user-plus" aria-hidden="true"></i></a></li> 
+
+                        <?php endif; ?> 
+
+                    </ul> 
+
+                </div><!-- /.navbar-collapse --> 
+
+            </div> 
+
+        </nav> 
+
+ 
+
+        <script> 
+
+            $().ready(function(e){ 
+
+ 
+
+                $.notifyDefaults({ 
+
+                    offset: 10, 
+
+                    placement: { align: 'center' }, 
+
+                    z_index: 2000, 
+
+                    delay: 1000 
+
+                }); 
+
+ 
+
+                tinyMCE.defaultSettings = { 
+
+                    remove_script_host: false, 
+
+                    relative_urls : false, 
+
+                    forced_root_block: 'div', 
+
+                    language: 'vi_VN', 
+
+                    plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount spellchecker imagetools contextmenu colorpicker tiny_mce_wiris textpattern help', 
+
+                    toolbar1: 'formatselect | bold italic strikethrough forecolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat | fullscreen | image | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry', 
+
+                    image_advtab: true 
+
+                }; 
+
+ 
+
+            }); 
+
+        </script> 
+
+ 
+
+        <div class="content" style="margin-top: 70px"> 
+
+        <?= $this->content ?> 
+
+        </div> 
+
+ 
+
+        <footer class="text-center"> 
+
+          <h3><?= $app_config['name'] ?></h3> 
+
+          <h4><?= $app_config['email'] ?></h4> 
+
+        </footer> 
+
+ 
+
+    </body> 
+
+</html> 
