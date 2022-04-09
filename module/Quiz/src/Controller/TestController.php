@@ -454,7 +454,7 @@ class TestController extends AbstractActionController
 		{
 			$data = Json::decode($request->getContent(), Json::TYPE_ARRAY);
 
-			$user->id = null;
+			$user_id = null;
 
 			if(empty($user))
 			{
